@@ -7,15 +7,19 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <LightToggle></LightToggle>
+  <div class="inner">
 
-  <p>&copy; {year} {site.name}. Built with Astro.</p>
-  <a href="#top">Back to top ↑</a>
+    <LightToggle></LightToggle>
+
+    <p>&copy; {year} {site.name}. Built with Astro.</p>
+    <a href="#top">Back to top ↑</a>
+  </div>
+  <div class="stripes" aria-hidden="true"></div>
 </footer>
 
 <style>
   .site-footer {
-    padding-block: var(--space-8);
+    padding-top: var(--space-8);
     border-top: var(--border-bold) solid var(--border-strong);
     display: flex;
     flex-wrap: wrap;
@@ -25,6 +29,30 @@ const year = new Date().getFullYear();
     color: var(--text-muted);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-wide);
+  }
+
+    .inner {
+    max-width: var(--max-width);
+    width: 100%;
+    margin-inline: auto;
+    padding: var(--space-3) var(--space-5);
+    gap: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Three signal lines (teal · amber · red) that start flush to the bottom at
+     the left, rise up-right at 45°, then run horizontal to the right edge,
+     keeping constant spacing through the bend. Scaled by height (auto width) so
+     the angle stays a true 45° and the lines reach the right edge; pinned left
+     so the turn sits at the start. */
+  .stripes {
+    width: 100%;
+    height: var(--space-10);
+    background-image: url('/footer-stripes.svg');
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: auto 100%;
   }
 
   a {

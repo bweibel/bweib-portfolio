@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6000" height="40" viewBox="0 0 6000 40" fill="none">
+  <!--
+    Three parallel signal lines (teal · amber · red). Each starts flush to the
+    bottom at the left, rises up-right at 45°, then turns horizontal and runs to
+    the right edge. Center-to-center spacing s = 12 (stroke 4 + gap 8). Corners
+    are staggered by s*(0.41421, 1) — the miter offset for a 45°→horizontal bend
+    — so the perpendicular gap stays constant through the turn.
+  -->
+  <g stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="12">
+    <path d="M0 40 L30 10 H6000" stroke="#2bb3a3"/>
+    <path d="M16.97 40 L34.97 22 H6000" stroke="#f2b900"/>
+    <path d="M33.94 40 L39.94 34 H6000" stroke="#e8472b"/>
+  </g>
+</svg>
