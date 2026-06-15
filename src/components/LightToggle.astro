@@ -1,0 +1,98 @@
+---
+---
+ 
+ <button
+        id="theme-toggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Switch color theme"
+      >
+        <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" />
+          <g class="rays">
+            <line x1="12" y1="1.8" x2="12" y2="4.6" />
+            <line x1="12" y1="19.4" x2="12" y2="22.2" />
+            <line x1="1.8" y1="12" x2="4.6" y2="12" />
+            <line x1="19.4" y1="12" x2="22.2" y2="12" />
+            <line x1="4.6" y1="4.6" x2="6.6" y2="6.6" />
+            <line x1="17.4" y1="17.4" x2="19.4" y2="19.4" />
+            <line x1="4.6" y1="19.4" x2="6.6" y2="17.4" />
+            <line x1="17.4" y1="6.6" x2="19.4" y2="4.6" />
+          </g>
+        </svg>
+        <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 14.5A8 8 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5Z" />
+        </svg>
+      </button>
+
+      <style>
+
+/* Stamped square theme toggle. */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-h-sm);
+    height: var(--control-h-sm);
+    padding: 0;
+    color: var(--text-strong);
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition);
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  .theme-toggle:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+    /* Show the icon for the mode you'd switch TO. */
+  :root[data-theme='dark'] .icon-moon {
+    display: none;
+  }
+
+  :root:not([data-theme='dark']) .icon-sun {
+    display: none;
+  }
+        </style>
+
+<script>
+  // Manual light/dark toggle. The pre-paint script in BaseLayout has already
+  // set <html data-theme>; here we just flip and persist the user's choice.
+  const root = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+
+  function sync(theme: string) {
+    root.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    toggle?.setAttribute('aria-pressed', String(theme === 'dark'));
+  }
+
+  // Reflect the initial state for assistive tech.
+  toggle?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+
+  toggle?.addEventListener('click', () => {
+    sync(root.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+</script>

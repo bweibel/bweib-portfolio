@@ -1,0 +1,59 @@
+---
+/* Contact section: email link + social links (no backend in Milestone 1). */
+import { site } from '../data/site';
+import SocialLinks from './SocialLinks.astro';
+---
+
+<section id="contact" class="contact">
+  <h2>Contact</h2>
+  <a class="email" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+  <div class="or">or find me on</div>
+  <SocialLinks />
+</section>
+
+<style>
+  .contact {
+    padding-block: var(--space-16);
+    border-top: var(--border-bold) solid var(--border-strong);
+  }
+
+  h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-5);
+  }
+
+  .lead {
+    max-width: var(--max-width-prose);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+  }
+
+  .email {
+    display: inline-block;
+    margin-top: var(--space-6);
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extra);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: var(--border-chunk);
+    text-underline-offset: 0.12em;
+  }
+
+  .email:hover {
+    color: var(--accent);
+  }
+
+  /* Mono tape-label connector. */
+  .or {
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-4);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+</style>

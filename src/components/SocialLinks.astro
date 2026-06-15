@@ -1,0 +1,57 @@
+---
+/* Curated profile links. External links open in a new, isolated tab. */
+import { site } from '../data/site';
+---
+
+<ul class="socials">
+  {
+    site.socials.map((social) => (
+      <li>
+        <a href={social.url} target="_blank" rel="noopener noreferrer">
+          {social.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .socials {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  a {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-strong);
+    font-family: var(--font-mono);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition);
+  }
+
+  a:hover {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  a:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+</style>

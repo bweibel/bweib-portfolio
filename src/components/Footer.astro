@@ -1,0 +1,38 @@
+---
+/* Site footer. */
+import { site } from '../data/site';
+import LightToggle from './LightToggle.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <LightToggle></LightToggle>
+
+  <p>&copy; {year} {site.name}. Built with Astro.</p>
+  <a href="#top">Back to top ↑</a>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--space-8);
+    border-top: var(--border-bold) solid var(--border-strong);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--text-secondary);
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+</style>

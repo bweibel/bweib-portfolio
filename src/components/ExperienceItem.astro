@@ -1,0 +1,112 @@
+---
+/* A single work-experience entry from the resume's `work[]`. */
+import type { WorkItem } from '../data/resume';
+import { formatDateRange } from '../lib/dates';
+
+interface Props {
+  item: WorkItem;
+}
+
+const { item } = Astro.props;
+const dateRange = formatDateRange(item.startDate, item.endDate);
+const meta = [item.location].filter(Boolean).join(' · ');
+---
+
+<article class="experience">
+  <header>
+    <h3>
+      {item.position}
+      <span class="at">at</span>
+      {
+        item.url ? (
+          <a href={item.url} target="_blank" rel="noopener noreferrer">
+            {item.name}
+          </a>
+        ) : (
+          <span>{item.name}</span>
+        )
+      }
+    </h3>
+    <p class="meta">
+      <span class="dates">{dateRange}</span>
+      {
+        meta && (
+          <span class="sep" aria-hidden="true">
+            ·
+          </span>
+        )
+      }
+      {meta && <span>{meta}</span>}
+    </p>
+  </header>
+
+  {item.summary && <p class="summary">{item.summary}</p>}
+
+  {
+    item.highlights && item.highlights.length > 0 && (
+      <ul class="highlights">
+        {item.highlights.map((highlight) => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .experience {
+    padding-left: var(--space-5);
+    border-left: var(--border-chunk) solid var(--accent);
+  }
+
+  h3 {
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    letter-spacing: var(--tracking-normal);
+  }
+
+  .at {
+    color: var(--text-muted);
+    font-weight: var(--weight-regular);
+  }
+
+  h3 a {
+    color: var(--text-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: var(--border-bold);
+    text-underline-offset: 0.15em;
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+  }
+
+  /* Mono tape-label meta line (dates · location). */
+  .meta {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .sep {
+    margin-inline: var(--space-2);
+  }
+
+  .summary {
+    margin-top: var(--space-3);
+    max-width: var(--max-width-prose);
+  }
+
+  .highlights {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--max-width-prose);
+  }
+</style>
