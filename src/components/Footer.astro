@@ -41,14 +41,14 @@ const year = new Date().getFullYear();
     justify-content: space-between;
   }
 
-  /* Three signal lines (teal · amber · red) that start flush to the bottom at
-     the left, rise up-right at 45°, then run horizontal to the right edge,
-     keeping constant spacing through the bend. Scaled by height (auto width) so
-     the angle stays a true 45° and the lines reach the right edge; pinned left
-     so the turn sits at the start. */
+  /* Three signal lines (teal · amber · red) that start at the left screen edge
+     (stacked up the edge, bottom line flush to the bottom), rise up-right at 45°,
+     then run horizontal to the right edge, keeping constant spacing through the
+     bend. Scaled by height (auto width) so the angle stays a true 45° and the
+     lines reach the right edge; pinned left so the turn sits at the start. */
   .stripes {
     width: 100%;
-    height: var(--space-10);
+    height: var(--space-16);
     background-image: url('/footer-stripes.svg');
     background-repeat: no-repeat;
     background-position: left center;
