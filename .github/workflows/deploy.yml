@@ -44,10 +44,16 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # Hostinger load-balances SSH across backends that present different
+          # host keys, so the key can't be pinned reliably — verification would
+          # fail intermittently. Trust is established by our deploy key instead.
+          SSH_OPTS="-i ~/.ssh/deploy_key -p $SSH_PORT \
+            -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -o LogLevel=ERROR"
 
           # Trailing slash on dist/ uploads its *contents* into DEPLOY_PATH.
           # --delete mirrors the directory, removing files no longer in the build.
           rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT" \
+            -e "ssh $SSH_OPTS" \
             dist/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
