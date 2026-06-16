@@ -13,8 +13,7 @@ const { item } = Astro.props;
   <header>
     <h3>{item.title}</h3>
     <p class="meta">
-      <span class="year">{item.year}</span>
-      <span class="sep" aria-hidden="true">·</span>
+      <span class="year bw-tape variant-accent-2">{item.year}</span>
       <span>{item.role}</span>
     </p>
   </header>
@@ -73,18 +72,18 @@ const { item } = Astro.props;
     letter-spacing: var(--tracking-normal);
   }
 
-  /* Mono tape-label meta line (year · role). */
+  /* Mono tape-label meta line (year badge + role). */
   .meta {
     margin-top: var(--space-2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
     font-family: var(--font-mono);
     color: var(--text-muted);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-  }
-
-  .sep {
-    margin-inline: var(--space-2);
   }
 
   .tagline {

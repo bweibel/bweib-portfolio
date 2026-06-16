@@ -1,0 +1,186 @@
+---
+/*
+ * Button — the bweib stamped control. Renders an <a> when `href` is set,
+ * otherwise a <button>.
+ *
+ * `variant` picks the look:
+ *   accent (red, default) · accent-2 (teal) · accent-3 (amber)
+ *     — filled hard-stamp CTAs that press into their offset shadow on click.
+ *     Amber flips to dark ink text for contrast.
+ *   ghost — outlined surface button that lifts on hover, presses on click
+ *     (form submits, social links).
+ *
+ * `size` controls padding + type: md (default) or sm.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'accent' | 'accent-2' | 'accent-3' | 'ghost';
+type Size = 'sm' | 'md';
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
+  href?: string;
+  variant?: Variant;
+  size?: Size;
+  type?: 'button' | 'submit' | 'reset';
+  /** Square the button around a single icon (slot in an <svg>). */
+  iconOnly?: boolean;
+}
+
+const {
+  href,
+  variant = 'accent',
+  size = 'md',
+  type = 'button',
+  iconOnly = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'btn',
+  `variant-${variant}`,
+  `size-${size}`,
+  iconOnly && 'is-icon',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+{
+  href ? (
+    <a class={classes} href={href} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes} type={type} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    --btn-bg: var(--accent);
+    --btn-bg-hover: var(--accent-hover);
+    --btn-fg: var(--text-on-accent);
+
+    display: inline-block;
+    border: var(--border-bold) solid var(--border-strong);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition),
+      background-color var(--transition);
+  }
+
+  /* ---- Sizes ---- */
+  .size-md {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+  }
+
+  /* Icon-only: square the button and size the slotted glyph. */
+  .is-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .is-icon.size-md {
+    padding: var(--space-3);
+  }
+
+  .is-icon.size-sm {
+    padding: var(--space-2);
+  }
+
+  .is-icon :global(svg) {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .size-sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  /* ---- Filled variants: hard-stamped, press into the offset shadow ---- */
+  .variant-accent,
+  .variant-accent-2,
+  .variant-accent-3 {
+    background-color: var(--btn-bg);
+    color: var(--btn-fg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard);
+  }
+
+  .variant-accent {
+    --btn-bg: var(--accent);
+    --btn-bg-hover: var(--accent-hover);
+  }
+
+  .variant-accent-2 {
+    --btn-bg: var(--accent-2);
+    --btn-bg-hover: var(--accent-2-hover);
+    color: var(--text-strong);
+
+  }
+
+  .variant-accent-3 {
+    --btn-bg: var(--accent-3);
+    --btn-bg-hover: var(--accent-3-hover);
+    --btn-fg: var(--ink-900);
+    color: var(--text-strong);
+
+  }
+
+  .variant-accent:hover:not(:disabled) {
+    background-color: var(--btn-bg-hover);
+    color: var(--btn-fg);
+  }
+
+  .variant-accent-2:hover:not(:disabled),
+  .variant-accent-3:hover:not(:disabled) {
+    background-color: var(--btn-bg-hover);
+    color: var(--text-strong);
+
+  }
+
+  .variant-accent:active:not(:disabled),
+  .variant-accent-2:active:not(:disabled),
+  .variant-accent-3:active:not(:disabled) {
+    transform: translate(var(--press-shift), var(--press-shift));
+    box-shadow: var(--shadow-hard-xs);
+  }
+
+  /* ---- Ghost variant: outline that lifts on hover, presses on click ---- */
+  .variant-ghost {
+    background-color: var(--surface-card);
+    color: var(--text-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  .variant-ghost:hover:not(:disabled) {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  .variant-ghost:active:not(:disabled) {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+</style>

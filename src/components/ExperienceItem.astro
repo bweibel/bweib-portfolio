@@ -10,6 +10,8 @@ interface Props {
 const { item } = Astro.props;
 const dateRange = formatDateRange(item.startDate, item.endDate);
 const meta = [item.location].filter(Boolean).join(' · ');
+/* No end date = the role you're in right now. */
+const isCurrent = !item.endDate;
 ---
 
 <article class="experience">
@@ -28,6 +30,7 @@ const meta = [item.location].filter(Boolean).join(' · ');
       }
     </h3>
     <p class="meta">
+      {isCurrent && <span class="bw-tape">Now</span>}
       <span class="dates">{dateRange}</span>
       {
         meta && (
@@ -84,18 +87,18 @@ const meta = [item.location].filter(Boolean).join(' · ');
     color: var(--accent);
   }
 
-  /* Mono tape-label meta line (dates · location). */
+  /* Mono tape-label meta line (now · dates · location). */
   .meta {
     margin-top: var(--space-2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
     font-family: var(--font-mono);
     color: var(--text-muted);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-  }
-
-  .sep {
-    margin-inline: var(--space-2);
   }
 
   .summary {

@@ -1,16 +1,17 @@
 ---
 /* About/intro section: name, role, optional tagline, and bio. */
 import { site } from '../data/site';
+import Button from './Button.astro';
 import SocialLinks from './SocialLinks.astro';
 ---
 
 <section id="about" class="hero">
   <p class="eyebrow">{site.role}</p>
-  <h1>{site.name}</h1>
+  <h1>Hi, I'm {site.name}</h1>
   {site.tagline && <p class="tagline">{site.tagline}</p>}
   <p class="bio">{site.bio}</p>
   <div class="actions">
-    <a class="cta" href="#contact">Get in touch</a>
+    <Button href="#contact">Get in touch</Button>
     <SocialLinks />
   </div>
 </section>
@@ -55,37 +56,6 @@ import SocialLinks from './SocialLinks.astro';
     align-items: center;
     gap: var(--space-5);
     margin-top: var(--space-8);
-  }
-
-  /* Hard-stamped button: bold border + offset shadow, presses into its shadow. */
-  .cta {
-    display: inline-block;
-    padding: var(--space-3) var(--space-6);
-    background-color: var(--accent);
-    color: var(--text-on-accent);
-    border: var(--border-bold) solid var(--border-strong);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-hard);
-    text-decoration: none;
-    font-family: var(--font-mono);
-    font-weight: var(--weight-bold);
-    font-size: var(--text-sm);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    transition:
-      transform var(--dur-fast) var(--ease-out),
-      box-shadow var(--dur-fast) var(--ease-out),
-      background-color var(--transition);
-  }
-
-  .cta:hover {
-    background-color: var(--accent-hover);
-    color: var(--text-on-accent);
-  }
-
-  .cta:active {
-    transform: translate(var(--press-shift), var(--press-shift));
-    box-shadow: var(--shadow-hard-xs);
   }
 
   @media (max-width: 40rem) {

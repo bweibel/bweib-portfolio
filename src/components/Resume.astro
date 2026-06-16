@@ -10,7 +10,7 @@ import SkillList from './SkillList.astro';
   <h2>Resume</h2>
 
   <div class="block">
-    <h3 class="block-title">Experience</h3>
+    <h3 class="block-title bw-tape">Experience</h3>
     <div class="experience-list">
       {resume.work.map((item) => <ExperienceItem item={item} />)}
     </div>
@@ -19,7 +19,7 @@ import SkillList from './SkillList.astro';
   {
     resume.skills.length > 0 && (
       <div class="block">
-        <h3 class="block-title">Skills</h3>
+        <h3 class="block-title bw-tape">Skills</h3>
         <SkillList groups={resume.skills} />
       </div>
     )
@@ -28,7 +28,7 @@ import SkillList from './SkillList.astro';
   {
     resume.education.length > 0 && (
       <div class="block">
-        <h3 class="block-title">Education</h3>
+        <h3 class="block-title bw-tape">Education</h3>
         <ul class="education-list">
           {resume.education.map((edu) => {
             const credential = [edu.studyType, edu.area].filter(Boolean).join(', ');
@@ -62,14 +62,8 @@ import SkillList from './SkillList.astro';
     margin-top: var(--space-16);
   }
 
-  /* Mono tape-label section markers. */
+  /* Stamped tape-label section markers (.bw-tape owns the look). */
   .block-title {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
-    color: var(--accent);
     margin-bottom: var(--space-8);
   }
 

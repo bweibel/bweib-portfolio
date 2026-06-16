@@ -7,7 +7,8 @@ import CaseStudy from './CaseStudy.astro';
 {
   caseStudies.length > 0 && (
     <section id="work" class="portfolio">
-      <h2>Selected Work</h2>
+      <p class="eyebrow bw-tape">Portfolio</p>
+      <h2>Recent Projects</h2>
       <div class="case-study-list">
         {caseStudies.map((item) => (
           <CaseStudy item={item} />
@@ -21,6 +22,10 @@ import CaseStudy from './CaseStudy.astro';
   .portfolio {
     padding-block: var(--space-16);
     border-top: var(--border-bold) solid var(--border-strong);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--space-4);
   }
 
   h2 {

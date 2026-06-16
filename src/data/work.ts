@@ -27,38 +27,46 @@ export interface CaseStudy {
 
 export const caseStudies: CaseStudy[] = [
   {
-    title: 'Project One',
-    tagline: 'Short description of the project and the problem it solved.',
+    title: 'Panopticorp (Neotropolis)',
+    tagline: 'Fictional Evil surveillance corporation immersive installation for a cyberpunk event.',
+    role: 'Solo build',
+    year: '2026',
+    tags: ['Microcontrollers', 'Typescript', '3d Printing','Electronics'],
+    highlights: [
+      'Developed as an interactive art piece for Neotropolis, a cyberpunk themed event',
+      'Included an in-theme art car',
+      'Sound/Motion Reactive LED lighting',
+      'Hosted local webserver and website on-premise, with interactive elements and storytelling'
+    ],
+    link: 'https://panopticorp.online/',
+    repo: 'https://github.com/bweibel/neotropolis-panopticorp',
+  },
+  {
+    title: 'Beverage Tracker',
+    tagline: 'Web App Tracker for Beer/Wine festivals',
+    role: 'Lead developer',
+    year: '2026',
+    tags: ['Javascript', 'PWA', 'CSS'],
+    highlights: [
+      'Mobile Friendly tracker for beverages.',
+      'Allows users to mark as tasted, favorited, or wishlisted.',
+      'Real time filtering, using styles, breweries, or search',
+      'Allows easy updating of hundreds of entries for event runners.',
+    ],
+    link: 'https://winterwarmerfest.com/beer-list',
+    repo: 'https://github.com/bweibel/bweib-beer-list',
+  },
+  {
+    title: 'TI-99 CyberDeck',
+    tagline: 'Functional Cyberdeck prop, built into the shell of a TI-99',
     role: 'Solo build',
     year: '2025',
-    tags: ['Astro', 'TypeScript', 'CSS'],
+    tags: ['Hardware', 'Linux', '3d Printing'],
     highlights: [
-      'What you built and the key technical decision behind it.',
-      'A measurable outcome or result, if you have one.',
-    ],
-    link: 'https://example.com',
-    repo: 'https://github.com/bweibel/example',
-  },
-  {
-    title: 'Project Two',
-    tagline: 'Short description of the project and the problem it solved.',
-    role: 'Lead developer',
-    year: '2024',
-    tags: ['Microcontrollers', 'Electronics', 'C'],
-    highlights: [
-      'What you built and the key technical decision behind it.',
-      'A measurable outcome or result, if you have one.',
-    ],
-  },
-  {
-    title: 'Project Three',
-    tagline: 'Short description of the project and the problem it solved.',
-    role: 'Solo build',
-    year: '2023',
-    tags: ['Self-hosting', 'Linux', 'Networking'],
-    highlights: [
-      'What you built and the key technical decision behind it.',
-      'A measurable outcome or result, if you have one.',
+      'Rasberry Pi 4 powered cyberdeck prop',
+      'Runs a full Linux distro (Debian)',
+      'Reactive lighting driven by additional microcontrollers',
+      'SDR unit for radio frequency monitoring'
     ],
   },
 ];

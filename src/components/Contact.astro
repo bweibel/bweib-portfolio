@@ -5,12 +5,13 @@
  * so it never appears in the page source. The form works without JS via a
  * plain POST; the inline script upgrades it to a fetch() with inline status.
  */
+import Button from './Button.astro';
 import SocialLinks from './SocialLinks.astro';
 ---
 
 <section id="contact" class="contact">
+  <p class="eyebrow bw-tape">Let's talk</p>
   <h2>Contact</h2>
-  <p class="lead">Want to say hi?</p>
 
   <form class="form" action="/contact.php" method="POST" novalidate>
     <div class="field">
@@ -48,7 +49,7 @@ import SocialLinks from './SocialLinks.astro';
       <input id="contact-company" name="company" type="text" tabindex="-1" autocomplete="off" />
     </div>
 
-    <button type="submit">Send message</button>
+    <Button type="submit" variant="ghost">Send message</Button>
     <p class="status" role="status" aria-live="polite"></p>
   </form>
 
@@ -98,6 +99,10 @@ import SocialLinks from './SocialLinks.astro';
   .contact {
     padding-block: var(--space-16);
     border-top: var(--border-bold) solid var(--border-strong);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--space-4);
   }
 
   h2 {
@@ -161,41 +166,6 @@ import SocialLinks from './SocialLinks.astro';
     width: 1px;
     height: 1px;
     overflow: hidden;
-  }
-
-  button {
-    display: inline-block;
-    padding: var(--space-3) var(--space-6);
-    background-color: var(--surface-card);
-    border: var(--border-bold) solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    color: var(--text-strong);
-    font-family: var(--font-mono);
-    font-weight: var(--weight-bold);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition:
-      transform var(--dur-fast) var(--ease-out),
-      box-shadow var(--dur-fast) var(--ease-out),
-      color var(--transition);
-  }
-
-  button:hover:not(:disabled) {
-    color: var(--accent);
-    transform: translate(-1px, -1px);
-    box-shadow: var(--shadow-hard-sm);
-  }
-
-  button:active:not(:disabled) {
-    transform: translate(1px, 1px);
-    box-shadow: none;
-  }
-
-  button:disabled {
-    opacity: 0.6;
-    cursor: progress;
   }
 
   .status {

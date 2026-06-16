@@ -126,6 +126,35 @@ ol {
   color: var(--text-secondary);
 }
 
+/* Tape-label: a stamped take on .bw-label — the mono caption on a filled accent
+   swatch with a bold ink border + hard offset shadow. For short markers only;
+   it reads as a banner on long text. */
+.bw-tape {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  border-radius: 0;
+  box-shadow: var(--shadow-hard-xs);
+  /* Stuck-on-crooked: a slight skew, like a label peeled and pressed by hand. */
+  transform: rotate(-2deg);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.bw-tape.variant-accent-2 {
+  background-color: var(--accent-2);
+  color: var(--ink-900);
+}
+
+.bw-tape.variant-accent-3 {
+  background-color: var(--accent-3);
+    color: var(--ink-900);
+}
+
 /* Hard-stamped block: bold border + offset shadow. */
 .bw-stamp {
   border: var(--border-bold) solid var(--border-strong);
