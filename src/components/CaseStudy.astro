@@ -1,0 +1,148 @@
+---
+/* A single case study card from `caseStudies[]`. */
+import type { CaseStudy } from '../data/work';
+
+interface Props {
+  item: CaseStudy;
+}
+
+const { item } = Astro.props;
+---
+
+<article class="case-study">
+  <header>
+    <h3>{item.title}</h3>
+    <p class="meta">
+      <span class="year">{item.year}</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <span>{item.role}</span>
+    </p>
+  </header>
+
+  <p class="tagline">{item.tagline}</p>
+
+  {
+    item.highlights.length > 0 && (
+      <ul class="highlights">
+        {item.highlights.map((highlight) => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    item.tags.length > 0 && (
+      <ul class="tags">
+        {item.tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    (item.link || item.repo) && (
+      <p class="links">
+        {item.link && (
+          <a href={item.link} target="_blank" rel="noopener noreferrer">
+            Visit
+          </a>
+        )}
+        {item.repo && (
+          <a href={item.repo} target="_blank" rel="noopener noreferrer">
+            Source
+          </a>
+        )}
+      </p>
+    )
+  }
+</article>
+
+<style>
+  .case-study {
+    padding-left: var(--space-5);
+    border-left: var(--border-chunk) solid var(--accent);
+  }
+
+  h3 {
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    letter-spacing: var(--tracking-normal);
+  }
+
+  /* Mono tape-label meta line (year · role). */
+  .meta {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .sep {
+    margin-inline: var(--space-2);
+  }
+
+  .tagline {
+    margin-top: var(--space-3);
+    max-width: var(--max-width-prose);
+    color: var(--text-secondary);
+  }
+
+  .highlights {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--max-width-prose);
+  }
+
+  /* Tech tags reuse the recurring mono tape-label voice. */
+  .tags {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tags li {
+    padding: var(--space-1) var(--space-3);
+    background-color: var(--surface-card);
+    border: var(--border-thin) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .links {
+    margin-top: var(--space-4);
+    display: flex;
+    gap: var(--space-5);
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: var(--border-bold);
+    text-underline-offset: 0.15em;
+  }
+
+  .links a:hover {
+    color: var(--accent);
+  }
+</style>

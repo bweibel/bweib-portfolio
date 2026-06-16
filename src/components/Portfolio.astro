@@ -1,0 +1,35 @@
+---
+/* Portfolio section: a list of case studies from `caseStudies[]`. */
+import { caseStudies } from '../data/work';
+import CaseStudy from './CaseStudy.astro';
+---
+
+{
+  caseStudies.length > 0 && (
+    <section id="work" class="portfolio">
+      <h2>Selected Work</h2>
+      <div class="case-study-list">
+        {caseStudies.map((item) => (
+          <CaseStudy item={item} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .portfolio {
+    padding-block: var(--space-16);
+    border-top: var(--border-bold) solid var(--border-strong);
+  }
+
+  h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-10);
+  }
+
+  .case-study-list {
+    display: grid;
+    gap: var(--space-10);
+  }
+</style>

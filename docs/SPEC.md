@@ -20,7 +20,7 @@ up front:
 | Hosting     | Hostinger — static `dist/` build, manual upload for now               |
 | Styling     | Scoped component CSS + design tokens (CSS custom properties, no deps) |
 | Resume data | JSON Resume file (jsonresume.org schema) at `src/data/resume.json`    |
-| Contact     | Email link + GitHub + LinkedIn (no backend / form in M1)              |
+| Contact     | Form → `public/contact.php` (Hostinger PHP mail handler) + socials    |
 | Accent      | Warm amber (`#f59e0b`), one token                                     |
 
 Astro ships zero JS by default (fast static output for Hostinger) while
@@ -52,7 +52,7 @@ src/
 │   ├── ExperienceItem.astro
 │   ├── SkillList.astro
 │   ├── SocialLinks.astro
-│   ├── Contact.astro      # mailto: + socials
+│   ├── Contact.astro      # contact form (→ /contact.php) + socials
 │   └── Footer.astro
 └── pages/
     └── index.astro        # composes BaseLayout + sections
@@ -105,8 +105,8 @@ Automating this is deferred (see Roadmap).
 - `npm run build` succeeds (includes `astro check`, 0 errors).
 - `npm run format:check` clean.
 - `npm run preview` serves the page (HTTP 200); nav anchors jump to
-  About/Resume/Contact; `mailto:` and social links work (socials open in a new
-  tab with `rel="noopener noreferrer"`).
+  About/Resume/Contact; the contact form and social links work (socials open in
+  a new tab with `rel="noopener noreferrer"`).
 - Responsive at ~360 / ~768 / ~1200 px.
 - Accessibility: keyboard tab order, visible focus states, heading hierarchy,
   color contrast. Target Lighthouse ≥ 95 across categories.

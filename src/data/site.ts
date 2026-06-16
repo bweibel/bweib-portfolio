@@ -22,8 +22,6 @@ export interface SiteConfig {
    * (tracked as an open item in docs/SPEC.md).
    */
   bio: string;
-  /** Public contact email shown in the mailto: link. */
-  contactEmail: string;
   /** Curated profile links, in display order. */
   socials: SocialLink[];
   /** SEO + canonical metadata. */
@@ -39,7 +37,6 @@ export const site: SiteConfig = {
   logo: 'bweib',
   role: 'Web developer, maker, tinkerer, and collector of side projects.',
   bio: `I like building things. Sometimes that means websites and interactive experiences. Other times it's soldering together electronics, tinkering with microcontrollers, setting up servers, fixing old hardware, or chasing an idea down a rabbit hole just to see where it leads.`,
-  contactEmail: 'ben@bweib.com',
   socials: [
     { label: 'GitHub', url: 'https://github.com/bweibel' },
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/ben-weibel-03994720/' },
