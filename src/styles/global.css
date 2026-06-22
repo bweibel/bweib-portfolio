@@ -114,6 +114,17 @@ ol {
   }
 }
 
+/* ---- Motion: initial hidden states ----
+   Only armed when `.anim-ready` is present on <html>, which BaseLayout's inline
+   script adds pre-paint and ONLY when the visitor allows motion. GSAP (see
+   src/scripts/animate.ts) then reveals each element. No-JS and reduced-motion
+   visitors never get the class, so they see the page fully rendered. */
+.anim-ready [data-anim='hero'] > *,
+.anim-ready [data-reveal],
+.anim-ready .bw-tape {
+  opacity: 0;
+}
+
 /* ---- Brand utility helpers (namespaced bw-) ---- */
 
 /* Tape-label: uppercase mono caption, the recurring micro-motif. */

@@ -5,7 +5,7 @@ import Button from './Button.astro';
 import SocialLinks from './SocialLinks.astro';
 ---
 
-<section id="about" class="hero">
+<section id="about" class="hero" data-anim="hero">
   <p class="eyebrow">{site.role}</p>
   <h1>Hi, I'm {site.name}</h1>
   {site.tagline && <p class="tagline">{site.tagline}</p>}
@@ -14,11 +14,79 @@ import SocialLinks from './SocialLinks.astro';
     <Button href="#contact">Get in touch</Button>
     <SocialLinks />
   </div>
+
+  <a class="scroll-cue" href="#work" aria-label="Scroll to projects">
+    <svg
+      class="scroll-cue-arrow"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </a>
 </section>
 
 <style>
+  /* Fill the viewport below the sticky header on first load (~3rem tall). */
   .hero {
-    padding-block: var(--space-20) var(--space-16);
+    position: relative;
+    min-height: calc(100svh - 3rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Symmetric padding so the content sits at true vertical center. */
+    padding-block: var(--space-16);
+  }
+
+  /* Hard-stamped scroll cue, anchored bottom-left to the content column. */
+  .scroll-cue {
+    position: absolute;
+    bottom: var(--space-6);
+    left: 0;
+    display: inline-flex;
+    padding: var(--space-2);
+    color: var(--text-secondary);
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard-sm);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition);
+  }
+
+  .scroll-cue:hover {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard);
+  }
+
+  .scroll-cue:active {
+    transform: translate(1px, 1px);
+    box-shadow: var(--shadow-hard-xs);
+  }
+
+  /* Subtle idle bounce. Disabled by the global prefers-reduced-motion rule. */
+  .scroll-cue-arrow {
+    animation: scroll-bounce 1.8s var(--ease-in-out) infinite;
+  }
+
+  @keyframes scroll-bounce {
+    0%,
+    100% {
+      transform: translateY(-1px);
+    }
+    50% {
+      transform: translateY(3px);
+    }
   }
 
   /* Mono tape-label eyebrow. */

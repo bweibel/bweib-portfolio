@@ -44,6 +44,17 @@ const ogImage = site.ogImage ? new URL(site.ogImage, site.url).href : undefined;
       })();
     </script>
 
+    {
+      /* Pre-paint motion gate: only when the visitor allows motion do we add
+        `anim-ready`, which arms the initial hidden states in global.css. This
+        keeps reduced-motion and no-JS visitors on the fully-visible page. */
+    }
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('anim-ready');
+      }
+    </script>
+
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -64,5 +75,8 @@ const ogImage = site.ogImage ? new URL(site.ogImage, site.url).href : undefined;
   </head>
   <body>
     <slot />
+    <script>
+      import '../scripts/animate';
+    </script>
   </body>
 </html>
