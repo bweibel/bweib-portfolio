@@ -1,0 +1,76 @@
+---
+/*
+ * Throwaway sandbox for comparing the grid-background variants live. Not linked
+ * from the site; visit /prototype during dev. Delete once a variant is chosen.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GridBackground from '../components/GridBackground.astro';
+
+const variants = ['pull', 'repel', 'lines'] as const;
+---
+
+<BaseLayout title="Grid background — prototype">
+  <GridBackground variant="pull" />
+
+  <main class="sandbox">
+    <h1>Grid background</h1>
+    <p>Move the pointer around. Switch variants to compare the feel.</p>
+
+    <div class="switch" role="group" aria-label="Variant">
+      {
+        variants.map((v, i) => (
+          <button type="button" data-variant={v} aria-pressed={i === 0}>
+            {v}
+          </button>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .sandbox {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: var(--space-16) var(--space-5);
+    min-height: 100svh;
+  }
+
+  .switch {
+    display: inline-flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .switch button {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    padding: var(--space-2) var(--space-4);
+    color: var(--text-strong);
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard-sm);
+    cursor: pointer;
+  }
+
+  .switch button[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--text-on-accent);
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('grid-bg');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.switch button');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      canvas?.dispatchEvent(
+        new CustomEvent('grid:variant', { detail: btn.dataset.variant }),
+      );
+    });
+  });
+</script>
