@@ -1,9 +1,8 @@
 /*
  * Selected work / case studies shown in the Portfolio section.
  *
- * These are placeholder entries — replace the title/summary/highlights with real
- * projects. Keep the array ordered newest-first; the section renders them in
- * order. Drop the `link`/`repo` fields when a project has nothing to link to.
+ * Keep the array ordered newest-first; the section renders them in order. Drop
+ * the `link`/`repo` fields when a project has nothing to link to.
  */
 
 export interface CaseStudy {
@@ -28,15 +27,16 @@ export interface CaseStudy {
 export const caseStudies: CaseStudy[] = [
   {
     title: 'Panopticorp (Neotropolis)',
-    tagline: 'Fictional Evil surveillance corporation immersive installation for a cyberpunk event.',
+    tagline:
+      'An immersive mobile installation for a multi-day cyberpunk event based on an original, in-universe surveillance megacorp.',
     role: 'Solo build',
     year: '2026',
-    tags: ['Microcontrollers', 'Typescript', '3d Printing','Electronics'],
+    tags: ['Microcontrollers', 'Typescript', '3d Printing', 'Electronics'],
     highlights: [
       'Developed as an interactive art piece for Neotropolis, a cyberpunk themed event',
-      'Included an in-theme art car',
+      'Featured an in-theme art car',
       'Sound/Motion Reactive LED lighting',
-      'Hosted local webserver and website on-premise, with interactive elements and storytelling'
+      'Hosted local webserver and website on-premise, with interactive elements and storytelling',
     ],
     link: 'https://panopticorp.online/',
     repo: 'https://github.com/bweibel/neotropolis-panopticorp',
@@ -66,7 +66,7 @@ export const caseStudies: CaseStudy[] = [
       'Rasberry Pi 4 powered cyberdeck prop',
       'Runs a full Linux distro (Debian)',
       'Reactive lighting driven by additional microcontrollers',
-      'SDR unit for radio frequency monitoring'
+      'SDR unit for radio frequency monitoring',
     ],
   },
 ];

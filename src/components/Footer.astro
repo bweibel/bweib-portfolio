@@ -8,8 +8,7 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="inner">
-
-    <LightToggle></LightToggle>
+    <LightToggle />
 
     <p>&copy; {year} {site.name}. Built with Astro.</p>
     <a href="#top">Back to top ↑</a>
@@ -31,7 +30,7 @@ const year = new Date().getFullYear();
     letter-spacing: var(--tracking-wide);
   }
 
-    .inner {
+  .inner {
     max-width: var(--max-width);
     width: 100%;
     margin-inline: auto;

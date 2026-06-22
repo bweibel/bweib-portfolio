@@ -19,10 +19,7 @@ export interface SiteConfig {
   role: string;
   /** Optional short tagline; omitted when empty. */
   tagline?: string;
-  /**
-   * About/Hero paragraph. TODO: replace placeholder with real bio
-   * (tracked as an open item in docs/SPEC.md).
-   */
+  /** About/Hero paragraph. */
   bio: string;
   /** Curated profile links, in display order. */
   socials: SocialLink[];

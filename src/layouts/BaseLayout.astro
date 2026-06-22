@@ -27,8 +27,10 @@ const ogImage = site.ogImage ? new URL(site.ogImage, site.url).href : undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    {/* Set the theme before first paint to avoid a flash. Honors a saved
-        choice, otherwise follows the OS preference. */}
+    {
+      /* Set the theme before first paint to avoid a flash. Honors a saved
+        choice, otherwise follows the OS preference. */
+    }
     <script is:inline>
       (() => {
         const stored = localStorage.getItem('theme');

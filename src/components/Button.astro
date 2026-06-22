@@ -36,13 +36,7 @@ const {
   ...rest
 } = Astro.props;
 
-const classes = [
-  'btn',
-  `variant-${variant}`,
-  `size-${size}`,
-  iconOnly && 'is-icon',
-  className,
-]
+const classes = ['btn', `variant-${variant}`, `size-${size}`, iconOnly && 'is-icon', className]
   .filter(Boolean)
   .join(' ');
 ---
@@ -131,7 +125,6 @@ const classes = [
     --btn-bg: var(--accent-2);
     --btn-bg-hover: var(--accent-2-hover);
     color: var(--text-strong);
-
   }
 
   .variant-accent-3 {
@@ -139,7 +132,6 @@ const classes = [
     --btn-bg-hover: var(--accent-3-hover);
     --btn-fg: var(--ink-900);
     color: var(--text-strong);
-
   }
 
   .variant-accent:hover:not(:disabled) {
@@ -151,7 +143,6 @@ const classes = [
   .variant-accent-3:hover:not(:disabled) {
     background-color: var(--btn-bg-hover);
     color: var(--text-strong);
-
   }
 
   .variant-accent:active:not(:disabled),

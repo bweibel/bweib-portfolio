@@ -9,7 +9,11 @@
     "summary": "Senior full-stack web engineer (15+ years) specializing in WordPress platform engineering and modern JavaScript (TypeScript/React + strong vanilla JS). Hands-on technical lead for agency/consulting engagements: discovery/estimation, plugin architecture, custom Gutenberg/ACF blocks, content modeling (CPT/taxonomies), and integrations (HubSpot, CF7, The Events Calendar). Known for performance/SEO-first delivery (TTFB/CWV triage), security-minded implementation, and high-polish front ends (spacing/typography/layout) that match design intent. Comfortable owning roadmaps, writing SOPs/documentation, mentoring, and debugging production systems across Linux/Docker/logs.",
     "location": { "city": "Bend", "countryCode": "US", "region": "OR" },
     "profiles": [
-      { "network": "LinkedIn", "username": "ben-weibel-03994720", "url": "https://www.linkedin.com/in/ben-weibel-03994720/" },
+      {
+        "network": "LinkedIn",
+        "username": "ben-weibel-03994720",
+        "url": "https://www.linkedin.com/in/ben-weibel-03994720/"
+      },
       { "network": "GitHub", "username": "bweibel", "url": "https://github.com/bweibel/" }
     ]
   },
@@ -167,12 +171,7 @@
     {
       "name": "Back End",
       "level": "Advanced",
-      "keywords": [
-        "PHP",
-        "MySQL",
-        "Node.js",
-        "REST APIs"
-      ]
+      "keywords": ["PHP", "MySQL", "Node.js", "REST APIs"]
     },
     {
       "name": "Engineering Leadership",
@@ -202,12 +201,7 @@
     {
       "name": "CMS / Ecommerce",
       "level": "Expert",
-      "keywords": [
-        "Shopify",
-        "Magento",
-        "Drupal",
-        "Payment Integrations"
-      ]
+      "keywords": ["Shopify", "Magento", "Drupal", "Payment Integrations"]
     }
   ],
   "projects": [
@@ -229,9 +223,7 @@
         "ACF",
         "JavaScript"
       ],
-      "roles": [
-        "Lead Engineer"
-      ],
+      "roles": ["Lead Engineer"],
       "type": "application"
     },
     {
@@ -242,42 +234,32 @@
         "Implemented audit-friendly logging and failure handling to prevent silent drops and duplicate records.",
         "Delivered polished authenticated UX (conditional nav, gated templates) aligned with a theme.json-driven design system."
       ],
-      "keywords": [
-        "WordPress",
-        "FSE",
-        "theme.json",
-        "PHP",
-        "HubSpot",
-        "Integrations",
-        "Auth"
-      ],
-      "roles": [
-        "Full-Stack Engineer"
-      ],
+      "keywords": ["WordPress", "FSE", "theme.json", "PHP", "HubSpot", "Integrations", "Auth"],
+      "roles": ["Full-Stack Engineer"],
       "type": "application"
     },
     {
-  "name": "Beer List (WordPress Plugin + Blocks)",
-  "description": "Custom WordPress plugin providing a CPT-backed beer list/taplist with editor-friendly blocks and a dynamic on-page filtering front-end display.",
-  "highlights": [
-    "Built plugin architecture from scratch (CPT/taxonomies/fields + rendering) with a focus on maintainability and clean separation of concerns.",
-    "Developed reusable editor components/blocks to standardize layout and reduce manual formatting for content teams.",
-    "Designed for performance and extensibility (predictable queries, reusable templates/components, and clear configuration surfaces)."
-  ],
-  "keywords": [
-    "WordPress",
-    "Custom Plugin",
-    "Gutenberg Blocks",
-    "ACF",
-    "CPT",
-    "PHP",
-    "JavaScript",
-    "CSS"
-  ],
-  "roles": ["Lead Engineer"],
-  "type": "application",
-  "url": "https://github.com/bweibel/bweib-beer-list"
-}
+      "name": "Beer List (WordPress Plugin + Blocks)",
+      "description": "Custom WordPress plugin providing a CPT-backed beer list/taplist with editor-friendly blocks and a dynamic on-page filtering front-end display.",
+      "highlights": [
+        "Built plugin architecture from scratch (CPT/taxonomies/fields + rendering) with a focus on maintainability and clean separation of concerns.",
+        "Developed reusable editor components/blocks to standardize layout and reduce manual formatting for content teams.",
+        "Designed for performance and extensibility (predictable queries, reusable templates/components, and clear configuration surfaces)."
+      ],
+      "keywords": [
+        "WordPress",
+        "Custom Plugin",
+        "Gutenberg Blocks",
+        "ACF",
+        "CPT",
+        "PHP",
+        "JavaScript",
+        "CSS"
+      ],
+      "roles": ["Lead Engineer"],
+      "type": "application",
+      "url": "https://github.com/bweibel/bweib-beer-list"
+    }
   ],
   "meta": {
     "canonical": "https://bweib.com/resume.json",

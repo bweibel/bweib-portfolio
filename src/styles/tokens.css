@@ -11,7 +11,7 @@
  * Webfonts load from Google Fonts; @import must stay first.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
   /* ============================================================ */
@@ -91,9 +91,9 @@
   --container-pad: clamp(1.25rem, 5vw, 4rem);
 
   /* ---- Type families ---- */
-  --font-display: "Archivo Expanded", "Archivo", system-ui, sans-serif;
-  --font-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-display: 'Archivo Expanded', 'Archivo', system-ui, sans-serif;
+  --font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   /* ---- Weights ---- */
   --weight-regular: 400;
@@ -239,47 +239,47 @@
 /* ============================================================ */
 
 :root[data-theme='dark'] {
-    color-scheme: dark;
+  color-scheme: dark;
 
-    /* Surfaces — warm near-black "paper" */
-    --color-bg: var(--black);
-    --color-bg-sunken: #0f0d07;
-    --surface-card: var(--ink-800);
-    --surface-raised: var(--ink-700);
-    --surface-inverse: var(--paper-50);
-    --surface-inset: var(--ink-900);
+  /* Surfaces — warm near-black "paper" */
+  --color-bg: var(--black);
+  --color-bg-sunken: #0f0d07;
+  --surface-card: var(--ink-800);
+  --surface-raised: var(--ink-700);
+  --surface-inverse: var(--paper-50);
+  --surface-inset: var(--ink-900);
 
-    /* Text — warm paper tones on the dark base */
-    --text-strong: var(--paper-50);
-    --text-body: var(--paper-100);
-    --text-secondary: var(--paper-400);
-    --text-muted: var(--paper-500);
-    --text-inverse: var(--ink-900);
-    /* --text-on-accent stays paper-50: signals keep light text in both modes */
+  /* Text — warm paper tones on the dark base */
+  --text-strong: var(--paper-50);
+  --text-body: var(--paper-100);
+  --text-secondary: var(--paper-400);
+  --text-muted: var(--paper-500);
+  --text-inverse: var(--ink-900);
+  /* --text-on-accent stays paper-50: signals keep light text in both modes */
 
-    /* Borders — light & warm so the hard-stamp outlines still read */
-    --border-strong: var(--paper-300);
-    --border-default: var(--ink-400);
-    --border-muted: var(--ink-600);
-    --hairline: var(--ink-700);
+  /* Borders — light & warm so the hard-stamp outlines still read */
+  --border-strong: var(--paper-300);
+  --border-default: var(--ink-400);
+  --border-muted: var(--ink-600);
+  --hairline: var(--ink-700);
 
-    /* Focus ring flips light to stay visible on dark surfaces */
-    --focus-ring: var(--paper-100);
+  /* Focus ring flips light to stay visible on dark surfaces */
+  --focus-ring: var(--paper-100);
 
-    /* Accent hovers brighten (instead of darken) against the dark base */
-    --accent-hover: color-mix(in srgb, var(--red-500) 78%, white);
-    --accent-2-hover: color-mix(in srgb, var(--teal-500) 78%, white);
-    --accent-3-hover: color-mix(in srgb, var(--amber-500) 82%, white);
+  /* Accent hovers brighten (instead of darken) against the dark base */
+  --accent-hover: color-mix(in srgb, var(--red-500) 78%, white);
+  --accent-2-hover: color-mix(in srgb, var(--teal-500) 78%, white);
+  --accent-3-hover: color-mix(in srgb, var(--amber-500) 82%, white);
 
-    /* Hard offset shadows flip to a warm light tone so the signature
+  /* Hard offset shadows flip to a warm light tone so the signature
        offset block stays visible against dark surfaces. */
-    --shadow-hard-xs: 1px 1px 0 var(--ink-400);
-    --shadow-hard-sm: 2px 2px 0 var(--ink-400);
-    --shadow-hard: 4px 4px 0 var(--ink-400);
-    --shadow-hard-lg: 6px 6px 0 var(--ink-400);
+  --shadow-hard-xs: 1px 1px 0 var(--ink-400);
+  --shadow-hard-sm: 2px 2px 0 var(--ink-400);
+  --shadow-hard: 4px 4px 0 var(--ink-400);
+  --shadow-hard-lg: 6px 6px 0 var(--ink-400);
 
-    /* Soft shadows go deeper/darker on the dark base */
-    --shadow-soft-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-    --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.55);
-    --shadow-soft-lg: 0 14px 40px rgba(0, 0, 0, 0.6);
+  /* Soft shadows go deeper/darker on the dark base */
+  --shadow-soft-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.55);
+  --shadow-soft-lg: 0 14px 40px rgba(0, 0, 0, 0.6);
 }

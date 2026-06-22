@@ -55,14 +55,14 @@ npm run dev      # start the dev server at http://localhost:4321
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the local dev server |
-| `npm run build` | Type-check (`astro check`) then build to `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run check` | Run Astro diagnostics only |
-| `npm run format` | Format the project with Prettier |
-| `npm run format:check` | Check formatting without writing |
+| Command                | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| `npm run dev`          | Start the local dev server                       |
+| `npm run build`        | Type-check (`astro check`) then build to `dist/` |
+| `npm run preview`      | Preview the production build locally             |
+| `npm run check`        | Run Astro diagnostics only                       |
+| `npm run format`       | Format the project with Prettier                 |
+| `npm run format:check` | Check formatting without writing                 |
 
 ## Build & deploy
 
