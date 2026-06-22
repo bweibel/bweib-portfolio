@@ -3,18 +3,35 @@
  * Contact form mail handler.
  *
  * The site is a static Astro build; this PHP file is copied into the deploy
- * root and executed by Hostinger. The recipient address lives ONLY here, so it
- * is never present in the served HTML/JS where scrapers could grab it.
+ * root and executed by Hostinger. The recipient address lives ONLY here (and in
+ * the off-webroot secrets file), so it is never present in the served HTML/JS
+ * where scrapers could grab it.
+ *
+ * Mail is sent through Google Workspace SMTP (authenticated submission), NOT
+ * PHP mail(). bweib.com's email lives on Google, so sending via Google means
+ * the message is SPF- and DKIM-aligned and lands in the inbox. Sending from
+ * Hostinger's local MTA would fail both and get spam-filtered.
+ *
+ * SMTP credentials are loaded from mail-secrets.php (see $SECRETS_PATH). On this
+ * host the dir above the web root isn't writable, so the file lives IN the web
+ * root but is kept safe three ways: it's denied by the root .htaccess, it only
+ * `return`s an array (executing it emits nothing even if served raw), and the
+ * deploy's rsync excludes it so --delete can't wipe it. It is gitignored.
  *
  * Front-end posts here via fetch() and expects JSON. Without JS the browser
  * navigates here with a normal form POST, so we also emit a minimal HTML page
  * as a fallback (chosen by the Accept header).
  */
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
+
 // --- Config ---------------------------------------------------------------
-$RECIPIENT  = 'ben@bweib.com';                 // where messages are delivered
-$FROM       = 'noreply@bweib.com';             // must be an @bweib.com sender
-                                               // (SPF/DKIM fail otherwise)
+// Credentials + addresses live outside the web root. See docs/SPEC.md for the
+// file's shape. Lives directly in the web root (the dir above isn't writable on
+// this host); protected by the root .htaccess + rsync --exclude.
+$SECRETS_PATH = __DIR__ . '/mail-secrets.php';
+
 $MAX_NAME    = 100;
 $MAX_EMAIL   = 254;
 $MAX_MESSAGE = 5000;
@@ -73,26 +90,57 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(false, 422, 'Please enter a valid email address.');
 }
 
-// --- Build + send mail ----------------------------------------------------
-// Strip CR/LF from any value that ends up in a header to block injection.
-$cleanName  = str_replace(["\r", "\n"], ' ', $name);
-$cleanEmail = str_replace(["\r", "\n"], ' ', $email);
+// --- Load SMTP config -----------------------------------------------------
+if (!is_file($SECRETS_PATH)) {
+    error_log("contact.php: secrets file missing at {$SECRETS_PATH}");
+    respond(false, 500, 'Sorry, the contact form is not configured yet.');
+}
+$cfg = require $SECRETS_PATH;
+foreach (['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'from', 'recipient'] as $key) {
+    if (empty($cfg[$key])) {
+        error_log("contact.php: secrets file missing key '{$key}'");
+        respond(false, 500, 'Sorry, the contact form is not configured yet.');
+    }
+}
 
-$subject = "Portfolio contact from {$cleanName}";
-$body    = "Name: {$cleanName}\n"
-         . "Email: {$cleanEmail}\n\n"
+// --- Load PHPMailer (vendored, no Composer) -------------------------------
+require __DIR__ . '/lib/phpmailer/Exception.php';
+require __DIR__ . '/lib/phpmailer/PHPMailer.php';
+require __DIR__ . '/lib/phpmailer/SMTP.php';
+
+// --- Build + send mail ----------------------------------------------------
+// PHPMailer handles header encoding/injection safety; no manual CR/LF stripping
+// needed once values go through its API.
+$subject = "Portfolio contact from {$name}";
+$body    = "Name: {$name}\n"
+         . "Email: {$email}\n\n"
          . $message . "\n";
 
-$headers = [
-    "From: bweib.com contact <{$FROM}>",
-    "Reply-To: {$cleanName} <{$cleanEmail}>",
-    'Content-Type: text/plain; charset=utf-8',
-    'MIME-Version: 1.0',
-];
+$mailer = new PHPMailer(true); // true => throw exceptions on failure
+try {
+    $mailer->isSMTP();
+    $mailer->Host       = $cfg['smtp_host'];
+    $mailer->Port       = (int) $cfg['smtp_port'];
+    $mailer->SMTPAuth   = true;
+    $mailer->Username   = $cfg['smtp_user'];
+    $mailer->Password   = $cfg['smtp_pass'];
+    $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // 587 + STARTTLS
+    $mailer->CharSet    = 'UTF-8';
 
-$sent = mail($RECIPIENT, $subject, $body, implode("\r\n", $headers));
+    // From must be the authenticated mailbox or a verified Google "Send as"
+    // alias, or Google will reject the submission.
+    $mailer->setFrom($cfg['from'], 'bweib.com contact');
+    $mailer->addAddress($cfg['recipient']);
+    $mailer->addReplyTo($email, $name); // reply goes straight to the visitor
 
-if (!$sent) {
+    $mailer->Subject = $subject;
+    $mailer->Body    = $body;
+
+    $mailer->send();
+} catch (PHPMailerException $e) {
+    // ErrorInfo carries the SMTP-level detail; the raw exception message is
+    // less useful. Log server-side, stay vague to the visitor.
+    error_log('contact.php: send failed: ' . $mailer->ErrorInfo);
     respond(false, 500, 'Sorry, something went wrong sending your message.');
 }
 

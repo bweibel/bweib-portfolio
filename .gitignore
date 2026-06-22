@@ -19,6 +19,9 @@ pnpm-debug.log*
 .env.production
 .env.*.local
 
+# contact-form SMTP credentials — lives off-webroot on the server, never commit
+mail-secrets.php
+
 # macOS / editor cruft
 .DS_Store
 *.swp

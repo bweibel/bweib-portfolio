@@ -1,0 +1,8 @@
+# The PHP under lib/ is included by contact.php server-side only.
+# Block direct web access to the library source.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>

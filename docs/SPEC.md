@@ -113,9 +113,35 @@ Automating this is deferred (see Roadmap).
 
 ## Open items
 
-- **Real `resume.json`** — replace the placeholder with Ben's JSON Resume export.
-- **Bio** — replace the placeholder paragraph in `site.ts`.
-- **Tagline** — optional one-liner (currently omitted).
+- **Contact form — finish SMTP wiring (manual, one-time).** `contact.php` sends
+  through Google Workspace SMTP (the domain's MX is Google, so this gives aligned
+  SPF + DKIM; Workspace DKIM is already published at `google._domainkey`). PHPMailer
+  is vendored at `public/lib/phpmailer/`. Two manual steps remain — neither is in
+  git, so they only need doing once on the server:
+  1. **App Password.** On the Google account that will send (e.g. `ben@bweib.com`),
+     enable 2-Step Verification, then create a 16-char App Password (Google Account →
+     Security → App passwords). Workspace admin must allow app passwords.
+  2. **Secrets file.** Create `mail-secrets.php` **directly in the web root**
+     (`public_html/mail-secrets.php`). The dir above the web root isn't writable on
+     this Hostinger account, so the file lives in the web root and is kept safe by:
+     the shipped root `.htaccess` (denies it by name), the fact that it only
+     `return`s an array (executing it emits nothing), the deploy's
+     `rsync --exclude 'mail-secrets.php'` (so `--delete` won't wipe it), and
+     `.gitignore` (never committed). It returns:
+
+     ```php
+     <?php
+     return [
+       'smtp_host' => 'smtp.gmail.com',
+       'smtp_port' => 587,
+       'smtp_user' => 'ben@bweib.com',      // the authenticated mailbox
+       'smtp_pass' => 'xxxx xxxx xxxx xxxx', // the App Password
+       'from'      => 'ben@bweib.com',      // must == smtp_user or a verified "Send as" alias
+       'recipient' => 'ben@bweib.com',      // where submissions land
+     ];
+     ```
+
+  Then submit the live form once to confirm delivery. No DNS changes are required.
 
 ## Roadmap (not built in M1)
 

@@ -1,0 +1,11 @@
+# Deny direct web access to the contact-form SMTP credentials. The file lives in
+# the web root (the dir above isn't writable on this host) and is loaded only by
+# contact.php server-side. Executing it emits nothing, but block it outright too.
+<Files "mail-secrets.php">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</Files>
