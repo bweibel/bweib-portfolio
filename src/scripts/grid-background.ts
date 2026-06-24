@@ -26,6 +26,13 @@ const BASE_ALPHA = 0.05; // dot opacity at rest
 const ACTIVE_ALPHA = 0.55; // dot opacity when fully affected
 const LINE_ALPHA = 0.04; // mesh line opacity at rest (lines variant)
 
+// ---- Scroll motion. Parallax drifts the whole field; the ripple is a
+// transient vertical shove the nodes ease back from on a fast scroll. ----
+const PARALLAX = 0.15; // grid drift per px scrolled (wrapped to SPACING → seamless)
+const SCROLL_FORCE = 0.18; // how much a scroll delta feeds the ripple impulse
+const MAX_SCROLL_PUSH = 14; // px — cap on the ripple displacement
+const SCROLL_FRICTION = 0.9; // per-frame decay of the ripple toward rest
+
 interface Dot {
   hx: number; // home x
   hy: number; // home y
@@ -52,6 +59,12 @@ function init() {
   // Pointer kept off-screen until the user actually moves it.
   const pointer = { x: -9999, y: -9999, active: false };
 
+  // Scroll state. `scrollPush` is the live ripple displacement that decays
+  // toward 0 each frame; `scrollY` tracks position for the parallax drift.
+  let scrollY = window.scrollY;
+  let scrollPush = 0;
+  let scrollQueued = false;
+
   // Dot colour pulled from the theme so it tracks light/dark. The canvas's CSS
   // `color` is set to var(--text-secondary), and the browser resolves it to a
   // concrete rgb() — so we read it back rather than the raw token, which
@@ -70,9 +83,12 @@ function init() {
     canvas!.height = Math.floor(height * dpr);
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Centre the grid so it sits evenly with a soft margin on every side.
-    cols = Math.ceil(width / SPACING) + 1;
-    rows = Math.ceil(height / SPACING) + 1;
+    // Centre the grid so it sits evenly with a soft margin on every side. Two
+    // extra rows/cols (and a one-cell head start on the offsets) cover the
+    // ±SPACING the field travels under the wrapped parallax drift, so no gap
+    // ever shows at the edges.
+    cols = Math.ceil(width / SPACING) + 3;
+    rows = Math.ceil(height / SPACING) + 3;
     const offX = (width - (cols - 1) * SPACING) / 2;
     const offY = (height - (rows - 1) * SPACING) / 2;
     nodes = [];
@@ -106,13 +122,31 @@ function init() {
       }
     }
 
+    // Scroll ripple: a shared vertical shove that decays to 0, so the node's
+    // target returns home on its own and the lerp below carries it back.
+    ty += scrollPush;
+    if (scrollPush !== 0) {
+      strength = Math.min(1, strength + Math.abs(scrollPush) / MAX_SCROLL_PUSH);
+    }
+
     n.x += (tx - n.x) * EASE;
     n.y += (ty - n.y) * EASE;
     return strength;
   }
 
   function frame() {
+    // Ripple eases back to rest a little each frame.
+    scrollPush *= SCROLL_FRICTION;
+    if (Math.abs(scrollPush) < 0.01) scrollPush = 0;
+
+    // Parallax: shift the whole field by a fraction of the scroll position,
+    // wrapped to one cell so it tiles seamlessly however long the page is. A
+    // single transform moves dots and mesh together; pointer math stays in
+    // untranslated home space.
+    const par = -((scrollY * PARALLAX) % SPACING);
+    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx!.clearRect(0, 0, width, height);
+    ctx!.setTransform(dpr, 0, 0, dpr, 0, par * dpr);
 
     // Lines first, so dots sit on top of the mesh.
     if (variant === 'lines') drawMesh();
@@ -171,6 +205,25 @@ function init() {
   window.addEventListener('pointerleave', () => {
     pointer.active = false;
   });
+
+  // Scroll feeds the parallax position and the ripple impulse. rAF-throttled,
+  // mirroring the header's scroll handler.
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (scrollQueued) return;
+      scrollQueued = true;
+      requestAnimationFrame(() => {
+        scrollQueued = false;
+        const y = window.scrollY;
+        scrollPush += (y - scrollY) * SCROLL_FORCE;
+        if (scrollPush > MAX_SCROLL_PUSH) scrollPush = MAX_SCROLL_PUSH;
+        else if (scrollPush < -MAX_SCROLL_PUSH) scrollPush = -MAX_SCROLL_PUSH;
+        scrollY = y;
+      });
+    },
+    { passive: true },
+  );
 
   // Debounced resize rebuild.
   let resizeTimer: number;
