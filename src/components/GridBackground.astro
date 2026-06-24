@@ -22,7 +22,7 @@ const { variant = 'lines' } = Astro.props;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -2; /* behind the asteroids game canvas (-1) */
     pointer-events: none;
     /* Source of the dot colour: the script reads this resolved value back so
        the grid tracks the light/dark theme. */

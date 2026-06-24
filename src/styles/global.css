@@ -125,6 +125,22 @@ ol {
   opacity: 0;
 }
 
+/* ---- Asteroids overlay ----
+   While the background game is in play (set by src/scripts/asteroids.ts), dim
+   and disable the site content behind the foreground canvas, and lock scrolling
+   so play isn't interrupted. The header and the game's own overlay chrome sit
+   above this. */
+:root[data-game='play'] body {
+  overflow: hidden;
+}
+
+:root[data-game='play'] main,
+:root[data-game='play'] footer {
+  opacity: 0.12;
+  pointer-events: none;
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+
 /* ---- Brand utility helpers (namespaced bw-) ---- */
 
 /* Tape-label: uppercase mono caption, the recurring micro-motif. */

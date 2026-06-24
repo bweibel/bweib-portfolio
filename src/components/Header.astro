@@ -30,6 +30,17 @@ const navItems = [
       </nav>
       <LightToggle />
       <button
+        class="game-toggle"
+        type="button"
+        aria-label="Play the background game"
+        aria-pressed="false"
+        hidden
+      >
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <polygon points="12,3 19.5,20 12,15.5 4.5,20"></polygon>
+        </svg>
+      </button>
+      <button
         class="nav-toggle"
         type="button"
         aria-label="Menu"
@@ -134,6 +145,51 @@ const navItems = [
     display: flex;
     align-items: center;
     gap: var(--space-5);
+  }
+
+  /* Stamped square play button — mirrors the theme toggle. Revealed by the game
+     script once it initialises (stays hidden under reduced-motion / no-JS). */
+  .game-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-h-sm);
+    height: var(--control-h-sm);
+    padding: 0;
+    color: var(--text-strong);
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition);
+  }
+
+  .game-toggle[hidden] {
+    display: none;
+  }
+
+  .game-toggle:hover {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  .game-toggle:active,
+  .game-toggle[aria-pressed='true'] {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .game-toggle .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
   }
 
   /* Stamped square hamburger — mirrors the theme toggle. Hidden on desktop. */
@@ -249,6 +305,13 @@ const navItems = [
   document.addEventListener('click', (e) => {
     const target = e.target as Node;
     if (!nav?.contains(target) && !toggle?.contains(target)) setOpen(false);
+  });
+
+  // Play button: hand off to the game engine, which enters/exits the overlay
+  // and keeps aria-pressed in sync (see scripts/asteroids.ts).
+  const gameBtn = document.querySelector<HTMLButtonElement>('.game-toggle');
+  gameBtn?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('game:toggle'));
   });
 
   // Hide the header when scrolling down, reveal it when scrolling back up.

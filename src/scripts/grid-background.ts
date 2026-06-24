@@ -65,6 +65,10 @@ function init() {
   let scrollPush = 0;
   let scrollQueued = false;
 
+  // Idled while the Asteroids overlay is open (see scripts/asteroids.ts), so two
+  // canvas loops don't run at once during play.
+  let running = true;
+
   // Dot colour pulled from the theme so it tracks light/dark. The canvas's CSS
   // `color` is set to var(--text-secondary), and the browser resolves it to a
   // concrete rgb() — so we read it back rather than the raw token, which
@@ -160,7 +164,7 @@ function init() {
       ctx!.fill();
     }
 
-    requestAnimationFrame(frame);
+    if (running) requestAnimationFrame(frame);
   }
 
   /**
@@ -232,6 +236,17 @@ function init() {
     resizeTimer = window.setTimeout(build, 150);
   });
 
+  // The Asteroids overlay pauses us while it's open, then resumes us on exit.
+  document.addEventListener('grid:pause', () => {
+    running = false;
+  });
+  document.addEventListener('grid:resume', () => {
+    if (!running) {
+      running = true;
+      requestAnimationFrame(frame);
+    }
+  });
+
   // Re-read the dot colour when the theme toggles (data-theme on <html>).
   new MutationObserver(readThemeColor).observe(document.documentElement, {
     attributes: true,
@@ -262,3 +277,5 @@ try {
 } catch (error) {
   console.error('[grid-background] disabled after error:', error);
 }
+
+export {};
