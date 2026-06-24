@@ -2,7 +2,7 @@
 
 ---
 
-<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch color theme">
+<button class="theme-toggle" type="button" aria-label="Switch color theme">
   <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
     <circle cx="12" cy="12" r="4.2"></circle>
     <g class="rays">
@@ -75,19 +75,22 @@
 <script>
   // Manual light/dark toggle. The pre-paint script in BaseLayout has already
   // set <html data-theme>; here we just flip and persist the user's choice.
+  // The component can appear more than once (header + footer), so we wire every
+  // .theme-toggle and keep their aria-pressed states in sync.
   const root = document.documentElement;
-  const toggle = document.getElementById('theme-toggle');
+  const toggles = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
 
   function sync(theme: string) {
     root.dataset.theme = theme;
     localStorage.setItem('theme', theme);
-    toggle?.setAttribute('aria-pressed', String(theme === 'dark'));
+    toggles.forEach((t) => t.setAttribute('aria-pressed', String(theme === 'dark')));
   }
 
-  // Reflect the initial state for assistive tech.
-  toggle?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
-
-  toggle?.addEventListener('click', () => {
-    sync(root.dataset.theme === 'dark' ? 'light' : 'dark');
+  // Reflect the initial state for assistive tech, then bind each instance.
+  sync(root.dataset.theme === 'dark' ? 'dark' : 'light');
+  toggles.forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      sync(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
   });
 </script>

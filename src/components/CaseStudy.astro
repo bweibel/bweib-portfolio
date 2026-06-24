@@ -1,5 +1,6 @@
 ---
 /* A single case study card from `caseStudies[]`. */
+import { Image } from 'astro:assets';
 import type { CaseStudy } from '../data/work';
 
 interface Props {
@@ -7,53 +8,78 @@ interface Props {
 }
 
 const { item } = Astro.props;
+
+// Resolve the data's `image` filename to a processed asset so Astro can emit a
+// responsive srcset + optimized format. Images live in src/assets/work/.
+const assets = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/work/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+const shot = item.image ? assets[`../assets/work/${item.image}`]?.default : undefined;
 ---
 
-<article class="case-study" data-reveal>
-  <header>
-    <h3>{item.title}</h3>
-    <p class="meta">
-      <span class="year bw-tape variant-accent-2">{item.year}</span>
-      <span>{item.role}</span>
-    </p>
-  </header>
-
-  <p class="tagline">{item.tagline}</p>
-
-  {
-    item.highlights.length > 0 && (
-      <ul class="highlights">
-        {item.highlights.map((highlight) => (
-          <li>{highlight}</li>
-        ))}
-      </ul>
-    )
-  }
-
-  {
-    item.tags.length > 0 && (
-      <ul class="tags">
-        {item.tags.map((tag) => (
-          <li>{tag}</li>
-        ))}
-      </ul>
-    )
-  }
-
-  {
-    (item.link || item.repo) && (
-      <p class="links">
-        {item.link && (
-          <a href={item.link} target="_blank" rel="noopener noreferrer">
-            Visit
-          </a>
-        )}
-        {item.repo && (
-          <a href={item.repo} target="_blank" rel="noopener noreferrer">
-            Source
-          </a>
-        )}
+<article class="case-study" class:list={{ 'has-image': shot }} data-reveal>
+  <div class="body">
+    <header>
+      <h3>{item.title}</h3>
+      <p class="meta">
+        <span class="year bw-tape variant-accent-2">{item.year}</span>
+        <span>{item.role}</span>
       </p>
+    </header>
+
+    <p class="tagline">{item.tagline}</p>
+
+    {
+      item.highlights.length > 0 && (
+        <ul class="highlights">
+          {item.highlights.map((highlight) => (
+            <li>{highlight}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      item.tags.length > 0 && (
+        <ul class="tags">
+          {item.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      (item.link || item.repo) && (
+        <p class="links">
+          {item.link && (
+            <a href={item.link} target="_blank" rel="noopener noreferrer">
+              Visit
+            </a>
+          )}
+          {item.repo && (
+            <a href={item.repo} target="_blank" rel="noopener noreferrer">
+              Source
+            </a>
+          )}
+        </p>
+      )
+    }
+  </div>
+
+  {
+    shot && (
+      <figure class="shot">
+        <Image
+          src={shot}
+          alt={item.imageAlt ?? ''}
+          widths={[320, 480, 640, 960]}
+          sizes="(max-width: 48rem) 90vw, 20rem"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
     )
   }
 </article>
@@ -62,6 +88,46 @@ const { item } = Astro.props;
   .case-study {
     padding-left: var(--space-5);
     border-left: var(--border-chunk) solid var(--accent);
+  }
+
+  /* With a photo, text and image sit side by side; the image holds a fixed
+     column so the text measure stays readable. Stacks on narrow screens. */
+  .case-study.has-image {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 20rem);
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  /* Hard-stamped photo frame, matching the site's tactile card treatment. */
+  .shot {
+    margin: 0;
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard);
+    overflow: hidden;
+    background: var(--surface-card);
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  @media (max-width: 48rem) {
+    .case-study.has-image {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+
+    /* On mobile, lead with the photo above the text. */
+    .shot {
+      grid-row: 1;
+      max-width: 22rem;
+    }
   }
 
   h3 {

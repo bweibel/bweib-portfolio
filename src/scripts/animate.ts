@@ -68,13 +68,6 @@ function init() {
       },
     );
   });
-
-  // ---- Micro-interaction: case-study cards nudge toward the reader. ----
-  gsap.utils.toArray<HTMLElement>('.case-study').forEach((card) => {
-    const nudge = gsap.quickTo(card, 'x', { duration: 0.3, ease: EASE_OUT });
-    card.addEventListener('mouseenter', () => nudge(6));
-    card.addEventListener('mouseleave', () => nudge(0));
-  });
 }
 
 try {

@@ -18,6 +18,10 @@ export interface CaseStudy {
   tags: string[];
   /** A few outcome-focused bullets: what you built and the impact. */
   highlights: string[];
+  /** Optional thumbnail filename in src/assets/work/ (e.g. "panopticorp.jpg"). */
+  image?: string;
+  /** Alt text for `image`. Describe the photo; required whenever `image` is set. */
+  imageAlt?: string;
   /** Optional live link. Omitted when absent. */
   link?: string;
   /** Optional source repository. Omitted when absent. */
@@ -38,6 +42,8 @@ export const caseStudies: CaseStudy[] = [
       'Sound/Motion Reactive LED lighting',
       'Hosted local webserver and website on-premise, with interactive elements and storytelling',
     ],
+    image: 'panopticorp.jpg',
+    imageAlt: 'The Panopticorp art car lit up at Neotropolis',
     link: 'https://panopticorp.online/',
     repo: 'https://github.com/bweibel/neotropolis-panopticorp',
   },
@@ -53,6 +59,8 @@ export const caseStudies: CaseStudy[] = [
       'Real time filtering, using styles, breweries, or search',
       'Allows easy updating of hundreds of entries for event runners.',
     ],
+    image: 'beverage-tracker.png',
+    imageAlt: 'The Beverage Tracker web app',
     link: 'https://winterwarmerfest.com/beer-list',
     repo: 'https://github.com/bweibel/bweib-beer-list',
   },
@@ -68,5 +76,7 @@ export const caseStudies: CaseStudy[] = [
       'Reactive lighting driven by additional microcontrollers',
       'SDR unit for radio frequency monitoring',
     ],
+    image: 'cyberdeck.jpg',
+    imageAlt: 'The TI-99 CyberDeck build',
   },
 ];

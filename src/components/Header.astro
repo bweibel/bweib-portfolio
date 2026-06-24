@@ -1,6 +1,7 @@
 ---
 /* Sticky site header: wordmark + in-page anchor navigation. */
 import { site } from '../data/site';
+import LightToggle from './LightToggle.astro';
 
 const navItems = [
   { label: 'About', href: '/#about' },
@@ -16,7 +17,7 @@ const navItems = [
       <img src="/wordmark.png" alt="" width="796" height="221" />
     </a>
     <div class="right">
-      <nav aria-label="Primary">
+      <nav id="primary-nav" aria-label="Primary">
         <ul>
           {
             navItems.map((item) => (
@@ -27,6 +28,24 @@ const navItems = [
           }
         </ul>
       </nav>
+      <LightToggle />
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-label="Menu"
+        aria-controls="primary-nav"
+        aria-expanded="false"
+      >
+        <svg class="icon icon-menu" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="3.5" y1="7" x2="20.5" y2="7"></line>
+          <line x1="3.5" y1="12" x2="20.5" y2="12"></line>
+          <line x1="3.5" y1="17" x2="20.5" y2="17"></line>
+        </svg>
+        <svg class="icon icon-close" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="5.5" y1="5.5" x2="18.5" y2="18.5"></line>
+          <line x1="18.5" y1="5.5" x2="5.5" y2="18.5"></line>
+        </svg>
+      </button>
     </div>
   </div>
 </header>
@@ -39,6 +58,19 @@ const navItems = [
     background-color: color-mix(in srgb, var(--color-bg) 90%, transparent);
     backdrop-filter: blur(8px);
     border-bottom: var(--border-bold) solid var(--border-strong);
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+
+  /* Tucked away when scrolling down; the script toggles this. Slides up by its
+     own height plus the border so nothing peeks. */
+  .site-header.is-hidden {
+    transform: translateY(calc(-100% - var(--border-bold)));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
   }
 
   .inner {
@@ -86,7 +118,7 @@ const navItems = [
   nav a {
     font-family: var(--font-mono);
     text-decoration: none;
-    font-size: var(--text-xs);
+    font-size: var(--text-s);
     font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
@@ -104,13 +136,149 @@ const navItems = [
     gap: var(--space-5);
   }
 
-  @media (max-width: 30rem) {
-    .right {
-      gap: var(--space-4);
+  /* Stamped square hamburger — mirrors the theme toggle. Hidden on desktop. */
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-h-sm);
+    height: var(--control-h-sm);
+    padding: 0;
+    color: var(--text-strong);
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      color var(--transition);
+  }
+
+  .nav-toggle:hover {
+    color: var(--accent);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  .nav-toggle:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .nav-toggle .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Show the menu icon when closed, the X when open. */
+  .icon-close {
+    display: none;
+  }
+
+  .nav-toggle[aria-expanded='true'] .icon-menu {
+    display: none;
+  }
+
+  .nav-toggle[aria-expanded='true'] .icon-close {
+    display: inline;
+  }
+
+  @media (max-width: 40rem) {
+    .nav-toggle {
+      display: inline-flex;
     }
 
-    nav ul {
-      gap: var(--space-4);
+    /* Nav drops out of the bar into a stamped panel below the header. */
+    #primary-nav {
+      position: absolute;
+      top: calc(100% + var(--space-2));
+      right: var(--space-5);
+      display: none;
+    }
+
+    #primary-nav.is-open {
+      display: block;
+    }
+
+    #primary-nav ul {
+      flex-direction: column;
+      gap: var(--space-1);
+      min-width: 11rem;
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface-card);
+      border: var(--border-bold) solid var(--border-strong);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-hard);
+    }
+
+    #primary-nav a {
+      display: block;
+      padding-block: var(--space-2);
     }
   }
 </style>
+
+<script>
+  // Phone-size dropdown nav. The CSS handles the breakpoint; this just opens and
+  // closes the panel and keeps aria-expanded honest.
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const nav = document.getElementById('primary-nav');
+
+  function setOpen(open: boolean) {
+    nav?.classList.toggle('is-open', open);
+    toggle?.setAttribute('aria-expanded', String(open));
+  }
+
+  toggle?.addEventListener('click', () => {
+    setOpen(!nav?.classList.contains('is-open'));
+  });
+
+  // Close after navigating, on Escape, or when tapping outside the menu.
+  nav?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', (e) => {
+    const target = e.target as Node;
+    if (!nav?.contains(target) && !toggle?.contains(target)) setOpen(false);
+  });
+
+  // Hide the header when scrolling down, reveal it when scrolling back up.
+  // rAF-throttled so we read scroll position at most once per frame.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const REVEAL_AT_TOP = 80; // px — always show near the very top
+  const DELTA = 6; // px — ignore tiny jitters before reacting
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  function onScroll() {
+    const y = window.scrollY;
+    // Keep the header pinned while the mobile menu is open or near the top.
+    if (nav?.classList.contains('is-open') || y < REVEAL_AT_TOP) {
+      header?.classList.remove('is-hidden');
+    } else if (Math.abs(y - lastY) > DELTA) {
+      header?.classList.toggle('is-hidden', y > lastY);
+    }
+    lastY = y;
+    ticking = false;
+  }
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(onScroll);
+      }
+    },
+    { passive: true },
+  );
+</script>
