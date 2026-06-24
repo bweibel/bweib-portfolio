@@ -80,7 +80,13 @@
 
   .game-hud {
     position: absolute;
-    top: var(--space-4);
+    /* Clear the sticky header bar (wordmark img + its padding + the header's
+       own padding + bottom border) plus a small gap, so Score/Lives don't
+       overlap the logo. */
+    top: calc(
+      1.3rem + var(--space-2) * 2 + var(--space-3) * 2 + var(--border-bold) +
+        var(--space-3)
+    );
     right: var(--space-5);
     left: var(--space-5);
     display: flex;
