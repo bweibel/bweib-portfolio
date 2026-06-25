@@ -18,6 +18,8 @@
  * hidden, so those visitors see exactly the prior page.
  */
 
+import { trackThemeColor } from './theme-color';
+
 type Mode = 'ambient' | 'play';
 
 // ---- Tunables ----
@@ -93,13 +95,9 @@ function init() {
   // Player intent. In ambient mode the bot writes these instead.
   const input = { left: false, right: false, thrust: false, fire: false };
 
-  // Dot colour pulled from the resolved theme (canvas CSS `color`), so the game
-  // tracks light/dark — identical trick to the grid background.
-  let rgb = '28, 24, 18';
-  function readThemeColor() {
-    const parsed = toRgb(getComputedStyle(canvas!).color);
-    if (parsed) rgb = parsed;
-  }
+  // Colour pulled from the resolved theme (canvas CSS `color`), so the game
+  // tracks light/dark — shared with the grid background (see theme-color).
+  const color = trackThemeColor(canvas);
 
   // ---- HUD / overlay DOM (lives in GameBackground.astro) ----
   const root = document.documentElement;
@@ -336,7 +334,7 @@ function init() {
 
     for (const a of asteroids) drawAsteroid(a, alpha);
 
-    ctx!.fillStyle = `rgba(${rgb}, ${alpha})`;
+    ctx!.fillStyle = `rgba(${color.rgb}, ${alpha})`;
     for (const b of bullets) {
       ctx!.beginPath();
       ctx!.arc(b.x, b.y, 1.8, 0, Math.PI * 2);
@@ -352,7 +350,7 @@ function init() {
     const { x, y, angle } = ship;
     const nose = SHIP_R + 3;
     const back = 2.6; // rad spread of the rear corners
-    ctx!.strokeStyle = `rgba(${rgb}, ${alpha})`;
+    ctx!.strokeStyle = `rgba(${color.rgb}, ${alpha})`;
     ctx!.beginPath();
     ctx!.moveTo(x + Math.cos(angle) * nose, y + Math.sin(angle) * nose);
     ctx!.lineTo(
@@ -384,7 +382,7 @@ function init() {
   }
 
   function drawAsteroid(a: Asteroid, alpha: number) {
-    ctx!.strokeStyle = `rgba(${rgb}, ${alpha})`;
+    ctx!.strokeStyle = `rgba(${color.rgb}, ${alpha})`;
     ctx!.beginPath();
     const n = a.verts.length;
     for (let i = 0; i < n; i++) {
@@ -421,7 +419,6 @@ function init() {
 
   // ---- Wiring ----
   resize();
-  readThemeColor();
   ship = spawnShip();
   startWave(AMBIENT_TARGET);
   canvas.classList.add('is-ready');
@@ -432,11 +429,6 @@ function init() {
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(resize, 150);
-  });
-
-  new MutationObserver(readThemeColor).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
   });
 
   // Header button (and any other trigger) toggles play.
@@ -536,19 +528,6 @@ function normalizeAngle(a: number): number {
   while (a <= -Math.PI) a += Math.PI * 2;
   while (a > Math.PI) a -= Math.PI * 2;
   return a;
-}
-
-/** Normalise a CSS colour (hex or rgb()) to an "r, g, b" string, or null. */
-function toRgb(value: string): string | null {
-  if (value.startsWith('#')) {
-    let hex = value.slice(1);
-    if (hex.length === 3) hex = hex.replace(/./g, (ch) => ch + ch);
-    if (hex.length !== 6) return null;
-    const num = parseInt(hex, 16);
-    return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
-  }
-  const m = value.match(/(\d+)[ ,]+(\d+)[ ,]+(\d+)/);
-  return m ? `${m[1]}, ${m[2]}, ${m[3]}` : null;
 }
 
 try {

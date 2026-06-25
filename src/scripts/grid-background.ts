@@ -13,6 +13,8 @@
  * motion, so the page looks identical to before for everyone else.
  */
 
+import { trackThemeColor } from './theme-color';
+
 type Variant = 'pull' | 'repel' | 'lines';
 
 // ---- Tunables (small offsets, like the rest of the site's motion). ----
@@ -41,66 +43,66 @@ interface Dot {
 }
 
 function init() {
+  // Listen to reduced motion prefrence from user
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.getElementById('grid-bg') as HTMLCanvasElement | null;
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) return;
 
-  let variant = (canvas.dataset.variant as Variant) || 'pull';
+  // All the mutable state the render loop and event handlers share. Grouping it
+  // in one object makes the shared surface obvious at a glance — this is the
+  // closure's stand-in for a class's fields. (`canvas`/`ctx` stay as consts
+  // above: they're fixed for the lifetime of the grid, not state.)
+  const state = {
+    variant: (canvas.dataset.variant as Variant) || 'pull',
 
-  let nodes: Dot[] = [];
-  let cols = 0;
-  let rows = 0;
-  let width = 0;
-  let height = 0;
-  let dpr = 1;
+    nodes: [] as Dot[],
+    cols: 0,
+    rows: 0,
+    width: 0,
+    height: 0,
+    dpr: 1,
 
-  // Pointer kept off-screen until the user actually moves it.
-  const pointer = { x: -9999, y: -9999, active: false };
+    // Pointer kept off-screen until the user actually moves it.
+    pointer: { x: -9999, y: -9999, active: false },
 
-  // Scroll state. `scrollPush` is the live ripple displacement that decays
-  // toward 0 each frame; `scrollY` tracks position for the parallax drift.
-  let scrollY = window.scrollY;
-  let scrollPush = 0;
-  let scrollQueued = false;
+    // Scroll state. `scrollPush` is the live ripple displacement that decays
+    // toward 0 each frame; `scrollY` tracks position for the parallax drift.
+    scrollY: window.scrollY,
+    scrollPush: 0,
+    scrollQueued: false,
 
-  // Idled while the Asteroids overlay is open (see scripts/asteroids.ts), so two
-  // canvas loops don't run at once during play.
-  let running = true;
+    // Idled while the Asteroids overlay is open (see scripts/asteroids.ts), so
+    // two canvas loops don't run at once during play.
+    running: true,
+  };
 
-  // Dot colour pulled from the theme so it tracks light/dark. The canvas's CSS
-  // `color` is set to var(--text-secondary), and the browser resolves it to a
-  // concrete rgb() — so we read it back rather than the raw token, which
-  // getComputedStyle would hand back unresolved as "var(--ink-600)".
-  let rgb = '28, 24, 18'; // --ink-900 fallback
-  function readThemeColor() {
-    const parsed = toRgb(getComputedStyle(canvas!).color);
-    if (parsed) rgb = parsed;
-  }
+  // Dot colour, pulled from the theme so it tracks light/dark (see theme-color).
+  const color = trackThemeColor(canvas);
 
   function build() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas!.width = Math.floor(width * dpr);
-    canvas!.height = Math.floor(height * dpr);
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    state.width = window.innerWidth;
+    state.height = window.innerHeight;
+    canvas!.width = Math.floor(state.width * state.dpr);
+    canvas!.height = Math.floor(state.height * state.dpr);
+    ctx!.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 
     // Centre the grid so it sits evenly with a soft margin on every side. Two
     // extra rows/cols (and a one-cell head start on the offsets) cover the
     // ±SPACING the field travels under the wrapped parallax drift, so no gap
     // ever shows at the edges.
-    cols = Math.ceil(width / SPACING) + 3;
-    rows = Math.ceil(height / SPACING) + 3;
-    const offX = (width - (cols - 1) * SPACING) / 2;
-    const offY = (height - (rows - 1) * SPACING) / 2;
-    nodes = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
+    state.cols = Math.ceil(state.width / SPACING) + 3;
+    state.rows = Math.ceil(state.height / SPACING) + 3;
+    const offX = (state.width - (state.cols - 1) * SPACING) / 2;
+    const offY = (state.height - (state.rows - 1) * SPACING) / 2;
+    state.nodes = [];
+    for (let r = 0; r < state.rows; r++) {
+      for (let c = 0; c < state.cols; c++) {
         const hx = offX + c * SPACING;
         const hy = offY + r * SPACING;
-        nodes.push({ hx, hy, x: hx, y: hy });
+        state.nodes.push({ hx, hy, x: hx, y: hy });
       }
     }
   }
@@ -111,16 +113,16 @@ function init() {
     let ty = n.hy;
     let strength = 0;
 
-    if (pointer.active) {
-      const dx = pointer.x - n.hx;
-      const dy = pointer.y - n.hy;
+    if (state.pointer.active) {
+      const dx = state.pointer.x - n.hx;
+      const dy = state.pointer.y - n.hy;
       const dist = Math.hypot(dx, dy);
       if (dist < PULL_RADIUS && dist > 0.001) {
         // Linear falloff: full strength at the pointer, zero at the radius.
         strength = 1 - dist / PULL_RADIUS;
         // repel pushes the node the other way (negative travel).
         const travel =
-          variant === 'repel' ? -strength * MAX_PUSH : strength * MAX_PULL;
+          state.variant === 'repel' ? -strength * MAX_PUSH : strength * MAX_PULL;
         tx = n.hx + (dx / dist) * travel;
         ty = n.hy + (dy / dist) * travel;
       }
@@ -128,9 +130,12 @@ function init() {
 
     // Scroll ripple: a shared vertical shove that decays to 0, so the node's
     // target returns home on its own and the lerp below carries it back.
-    ty += scrollPush;
-    if (scrollPush !== 0) {
-      strength = Math.min(1, strength + Math.abs(scrollPush) / MAX_SCROLL_PUSH);
+    ty += state.scrollPush;
+    if (state.scrollPush !== 0) {
+      strength = Math.min(
+        1,
+        strength + Math.abs(state.scrollPush) / MAX_SCROLL_PUSH,
+      );
     }
 
     n.x += (tx - n.x) * EASE;
@@ -140,31 +145,31 @@ function init() {
 
   function frame() {
     // Ripple eases back to rest a little each frame.
-    scrollPush *= SCROLL_FRICTION;
-    if (Math.abs(scrollPush) < 0.01) scrollPush = 0;
+    state.scrollPush *= SCROLL_FRICTION;
+    if (Math.abs(state.scrollPush) < 0.01) state.scrollPush = 0;
 
     // Parallax: shift the whole field by a fraction of the scroll position,
     // wrapped to one cell so it tiles seamlessly however long the page is. A
     // single transform moves dots and mesh together; pointer math stays in
     // untranslated home space.
-    const par = -((scrollY * PARALLAX) % SPACING);
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx!.clearRect(0, 0, width, height);
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, par * dpr);
+    const par = -((state.scrollY * PARALLAX) % SPACING);
+    ctx!.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+    ctx!.clearRect(0, 0, state.width, state.height);
+    ctx!.setTransform(state.dpr, 0, 0, state.dpr, 0, par * state.dpr);
 
     // Lines first, so dots sit on top of the mesh.
-    if (variant === 'lines') drawMesh();
+    if (state.variant === 'lines') drawMesh();
 
-    for (const n of nodes) {
+    for (const n of state.nodes) {
       const strength = step(n);
       const alpha = BASE_ALPHA + (ACTIVE_ALPHA - BASE_ALPHA) * strength;
-      ctx!.fillStyle = `rgba(${rgb}, ${alpha})`;
+      ctx!.fillStyle = `rgba(${color.rgb}, ${alpha})`;
       ctx!.beginPath();
       ctx!.arc(n.x, n.y, DOT_RADIUS, 0, Math.PI * 2);
       ctx!.fill();
     }
 
-    if (running) requestAnimationFrame(frame);
+    if (state.running) requestAnimationFrame(frame);
   }
 
   /**
@@ -174,6 +179,7 @@ function init() {
    */
   function drawMesh() {
     ctx!.lineWidth = 1;
+    const { nodes, cols, rows } = state;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const a = nodes[r * cols + c];
@@ -188,7 +194,7 @@ function init() {
     // Fade out as the segment stretches beyond ~1.6× its resting length.
     const slack = Math.max(0, 1 - (len - SPACING) / (SPACING * 0.6));
     if (slack <= 0) return;
-    ctx!.strokeStyle = `rgba(${rgb}, ${LINE_ALPHA * slack})`;
+    ctx!.strokeStyle = `rgba(${color.rgb}, ${LINE_ALPHA * slack})`;
     ctx!.beginPath();
     ctx!.moveTo(a.x, a.y);
     ctx!.lineTo(b.x, b.y);
@@ -196,18 +202,17 @@ function init() {
   }
 
   // ---- Wiring ----
-  readThemeColor();
   build();
   canvas.classList.add('is-ready');
   requestAnimationFrame(frame);
 
   window.addEventListener('pointermove', (e) => {
-    pointer.x = e.clientX;
-    pointer.y = e.clientY;
-    pointer.active = true;
+    state.pointer.x = e.clientX;
+    state.pointer.y = e.clientY;
+    state.pointer.active = true;
   });
   window.addEventListener('pointerleave', () => {
-    pointer.active = false;
+    state.pointer.active = false;
   });
 
   // Scroll feeds the parallax position and the ripple impulse. rAF-throttled,
@@ -215,15 +220,17 @@ function init() {
   window.addEventListener(
     'scroll',
     () => {
-      if (scrollQueued) return;
-      scrollQueued = true;
+      if (state.scrollQueued) return;
+      state.scrollQueued = true;
       requestAnimationFrame(() => {
-        scrollQueued = false;
+        state.scrollQueued = false;
         const y = window.scrollY;
-        scrollPush += (y - scrollY) * SCROLL_FORCE;
-        if (scrollPush > MAX_SCROLL_PUSH) scrollPush = MAX_SCROLL_PUSH;
-        else if (scrollPush < -MAX_SCROLL_PUSH) scrollPush = -MAX_SCROLL_PUSH;
-        scrollY = y;
+        state.scrollPush += (y - state.scrollY) * SCROLL_FORCE;
+        if (state.scrollPush > MAX_SCROLL_PUSH)
+          state.scrollPush = MAX_SCROLL_PUSH;
+        else if (state.scrollPush < -MAX_SCROLL_PUSH)
+          state.scrollPush = -MAX_SCROLL_PUSH;
+        state.scrollY = y;
       });
     },
     { passive: true },
@@ -238,38 +245,19 @@ function init() {
 
   // The Asteroids overlay pauses us while it's open, then resumes us on exit.
   document.addEventListener('grid:pause', () => {
-    running = false;
+    state.running = false;
   });
   document.addEventListener('grid:resume', () => {
-    if (!running) {
-      running = true;
+    if (!state.running) {
+      state.running = true;
       requestAnimationFrame(frame);
     }
   });
 
-  // Re-read the dot colour when the theme toggles (data-theme on <html>).
-  new MutationObserver(readThemeColor).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  });
-
   // Let the prototype page switch variants live without a reload.
   canvas.addEventListener('grid:variant', (e) => {
-    variant = (e as CustomEvent<Variant>).detail;
+    state.variant = (e as CustomEvent<Variant>).detail;
   });
-}
-
-/** Normalise a CSS colour (hex or rgb()) to an "r, g, b" string, or null. */
-function toRgb(value: string): string | null {
-  if (value.startsWith('#')) {
-    let hex = value.slice(1);
-    if (hex.length === 3) hex = hex.replace(/./g, (ch) => ch + ch);
-    if (hex.length !== 6) return null;
-    const num = parseInt(hex, 16);
-    return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
-  }
-  const m = value.match(/(\d+)[ ,]+(\d+)[ ,]+(\d+)/);
-  return m ? `${m[1]}, ${m[2]}, ${m[3]}` : null;
 }
 
 try {
