@@ -308,7 +308,7 @@ const navItems = [
   });
 
   // Play button: hand off to the game engine, which enters/exits the overlay
-  // and keeps aria-pressed in sync (see scripts/asteroids.ts).
+  // and keeps aria-pressed in sync (see scripts/asteroids/).
   const gameBtn = document.querySelector<HTMLButtonElement>('.game-toggle');
   gameBtn?.addEventListener('click', () => {
     document.dispatchEvent(new CustomEvent('game:toggle'));

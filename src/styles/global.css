@@ -126,10 +126,10 @@ ol {
 }
 
 /* ---- Asteroids overlay ----
-   While the background game is in play (set by src/scripts/asteroids.ts), dim
-   and disable the site content behind the foreground canvas, and lock scrolling
-   so play isn't interrupted. The header and the game's own overlay chrome sit
-   above this. */
+   While the background game is in play (set by src/scripts/asteroids/), dim
+   and disable the site content behind the foreground canvas, lock scrolling so
+   play isn't interrupted, and slide the header out of the way. The game's own
+   overlay chrome (HUD + close button) sits above this. */
 :root[data-game='play'] body {
   overflow: hidden;
 }
@@ -139,6 +139,13 @@ ol {
   opacity: 0.12;
   pointer-events: none;
   transition: opacity var(--dur-med) var(--ease-out);
+}
+
+/* Tuck the header away during play (reusing its own slide-up + transition);
+   the overlay close button and Escape handle exiting. */
+:root[data-game='play'] .site-header {
+  transform: translateY(calc(-100% - var(--border-bold)));
+  pointer-events: none;
 }
 
 /* ---- Brand utility helpers (namespaced bw-) ---- */

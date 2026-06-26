@@ -46,11 +46,24 @@ import SkillList from './SkillList.astro';
     )
   }
 </section>
+<section>
+  <figure class="snapshot" data-reveal>
+      <img
+        class="snapshot-img"
+        src="/me-pixels.png"
+        alt="A pixelated black-and-white photo of me as a child at an early computer"
+        width="512"
+        height="512"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption class="snapshot-cap bw-tape">Where it started</figcaption>
+    </figure>
+</section>
 
 <style>
   .resume {
     padding-block: var(--space-16);
-    border-top: var(--border-bold) solid var(--border-strong);
   }
 
   h2 {
@@ -102,4 +115,41 @@ import SkillList from './SkillList.astro';
     color: var(--text-muted);
     font-size: var(--text-sm);
   }
+
+  /* Snapshot: a printed photo stamped into the colophon. */
+  .snapshot {
+    position: relative;
+    /* Centered horizontally in the footer's column stack. */
+    align-self: center;
+    margin: var(--space-6) auto var(--space-10);
+  }
+
+  .snapshot-img {
+    display: block;
+    width: clamp(8rem, 26vw, 15.5rem);
+    height: auto;
+    /* Keep the dither crisp and proudly blocky. */
+    image-rendering: pixelated;
+    background: var(--surface-card);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  /* Lift the print and snap its shadow to brand red on hover. */
+  .snapshot:hover .snapshot-img {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-hard-accent);
+  }
+
+  /* Tape caption stuck on the bottom-left corner. */
+  .snapshot-cap {
+    position: absolute;
+    left: calc(-1 * var(--space-3));
+    bottom: calc(-1 * var(--space-3));
+  }
+
 </style>

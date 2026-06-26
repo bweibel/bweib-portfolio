@@ -34,6 +34,7 @@ const PARALLAX = 0.15; // grid drift per px scrolled (wrapped to SPACING → sea
 const SCROLL_FORCE = 0.18; // how much a scroll delta feeds the ripple impulse
 const MAX_SCROLL_PUSH = 14; // px — cap on the ripple displacement
 const SCROLL_FRICTION = 0.9; // per-frame decay of the ripple toward rest
+const SCROLL_ALPHA_GAIN = 0.25; // how much the ripple brightens nodes (0 = none)
 
 interface Dot {
   hx: number; // home x
@@ -73,7 +74,7 @@ function init() {
     scrollPush: 0,
     scrollQueued: false,
 
-    // Idled while the Asteroids overlay is open (see scripts/asteroids.ts), so
+    // Idled while the Asteroids overlay is open (see scripts/asteroids/), so
     // two canvas loops don't run at once during play.
     running: true,
   };
@@ -134,7 +135,8 @@ function init() {
     if (state.scrollPush !== 0) {
       strength = Math.min(
         1,
-        strength + Math.abs(state.scrollPush) / MAX_SCROLL_PUSH,
+        strength +
+          (Math.abs(state.scrollPush) / MAX_SCROLL_PUSH) * SCROLL_ALPHA_GAIN,
       );
     }
 

@@ -40,17 +40,34 @@ export function trackThemeColor(
   el: HTMLElement,
   fallback = '28, 24, 18', // --ink-900
 ): ThemeColor {
+  return track(() => getComputedStyle(el).color, fallback);
+}
+
+/**
+ * Like `trackThemeColor`, but reads the element's resolved `background-color`
+ * (defaults to the page background). Useful for filling shapes with the page
+ * colour so they occlude what's behind them, light/dark-aware.
+ */
+export function trackThemeBackground(
+  el: HTMLElement = document.body,
+  fallback = '239, 230, 213', // --paper-200
+): ThemeColor {
+  return track(() => getComputedStyle(el).backgroundColor, fallback);
+}
+
+/** Shared: keep `rgb` in sync with `read()`, re-reading on a `data-theme` flip. */
+function track(read: () => string, fallback: string): ThemeColor {
   const state = { rgb: fallback };
 
-  function read() {
-    const parsed = toRgb(getComputedStyle(el).color);
+  function update() {
+    const parsed = toRgb(read());
     if (parsed) state.rgb = parsed;
   }
 
-  read();
+  update();
 
   // Re-read when the theme toggles (data-theme on <html>).
-  new MutationObserver(read).observe(document.documentElement, {
+  new MutationObserver(update).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ['data-theme'],
   });

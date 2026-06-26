@@ -4,7 +4,7 @@
  * -2) and autoplays as ambient motion. When the header's play button is pressed,
  * the engine sets <html data-game="play">; the CSS here promotes the canvas to a
  * foreground overlay, dims the site behind it, and reveals the HUD + on-screen
- * controls. See `scripts/asteroids.ts`.
+ * controls. See `scripts/asteroids/`.
  *
  * Reduced-motion / no-JS safety: the script only runs (and only reveals the
  * header button) when motion is allowed; otherwise the canvas stays blank.
@@ -17,6 +17,8 @@
   <div class="game-hud">
     <span class="bw-label">Score <b data-game-score>0</b></span>
     <span class="bw-label">Lives <b data-game-lives>3</b></span>
+    <span class="bw-label">Wave <b data-game-wave>1</b></span>
+    <span class="bw-label">Best <b data-game-best>0</b></span>
     <button class="game-close" type="button" aria-label="Exit game" data-game-close>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <line x1="5.5" y1="5.5" x2="18.5" y2="18.5"></line>
@@ -24,6 +26,8 @@
       </svg>
     </button>
   </div>
+
+  <p class="game-wave-banner bw-label" data-game-wave-banner aria-hidden="true"></p>
 
   <p class="game-message bw-label" data-game-message hidden>
     Game over — press Space or tap to restart
@@ -80,13 +84,9 @@
 
   .game-hud {
     position: absolute;
-    /* Clear the sticky header bar (wordmark img + its padding + the header's
-       own padding + bottom border) plus a small gap, so Score/Lives don't
-       overlap the logo. */
-    top: calc(
-      1.3rem + var(--space-2) * 2 + var(--space-3) * 2 + var(--border-bold) +
-        var(--space-3)
-    );
+    /* The header slides away during play, so the HUD sits at the top of the
+       window. */
+    top: var(--space-4);
     right: var(--space-5);
     left: var(--space-5);
     display: flex;
@@ -152,6 +152,41 @@
     text-align: center;
   }
 
+  /* "Wave N" transient banner — above centre so it never overlaps game-message. */
+  .game-wave-banner {
+    position: absolute;
+    top: 32%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-2) var(--space-4);
+    background: color-mix(in srgb, var(--surface-card) 85%, transparent);
+    border: var(--border-bold) solid var(--border-strong);
+    box-shadow: var(--shadow-hard-sm);
+    color: var(--text-strong);
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  @keyframes wave-banner-show {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+    70%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(2px); }
+  }
+
+  .game-wave-banner.is-shown {
+    animation: wave-banner-show 1.6s ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .game-wave-banner.is-shown {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
   /* Touch pads: only on coarse pointers, and only while playing. */
   .game-touch {
     display: none;
@@ -208,5 +243,5 @@
 </style>
 
 <script>
-  import '../scripts/asteroids';
+  import '../scripts/asteroids/index';
 </script>
