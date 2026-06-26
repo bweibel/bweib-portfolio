@@ -5,8 +5,15 @@
  * background, near-opaque in the play overlay).
  */
 
-import { AMBIENT_ALPHA, AMBIENT_PARTICLE_ALPHA, PLAY_ALPHA, SHIP_R } from './config';
-import type { Asteroid, Env, GameState, Saucer } from './types';
+import {
+  AMBIENT_ALPHA,
+  AMBIENT_PARTICLE_ALPHA,
+  PLAY_ALPHA,
+  POWERUP_COLORS,
+  POWERUP_GLYPHS,
+  SHIP_R,
+} from './config';
+import type { Asteroid, Env, GameState, PowerupKind, Saucer } from './types';
 
 // ---- Render ----
 export function render(env: Env, state: GameState): void {
@@ -50,6 +57,9 @@ export function render(env: Env, state: GameState): void {
 
   if (state.saucer) drawSaucer(env, state, alpha);
 
+  // Powerup field tokens (play only; always empty in ambient, but guard is cheap).
+  if (state.mode === 'play') drawPowerups(env, state);
+
   // Particles are rendered inside the shake transform so they shake with the scene.
   // In ambient mode `state.particles` is always empty, so this is a no-op there.
   drawParticles(env, state);
@@ -58,7 +68,13 @@ export function render(env: Env, state: GameState): void {
   // in ambient the ship is never at risk, so the flash would just be noise.
   const blink =
     state.mode === 'play' && state.ship.invuln > 0 && Math.floor(state.ship.invuln * 8) % 2 === 0;
-  if (!blink && !(state.mode === 'play' && state.gameOver)) drawShip(env, state, alpha);
+  if (!blink && !(state.mode === 'play' && state.gameOver)) {
+    // Shield bubble renders before the ship so the ship sits visually inside it.
+    if (state.mode === 'play' && state.shieldTimer > 0) drawShieldBubble(env, state);
+    drawShip(env, state, alpha);
+    // Active rapid/spread chips rendered just below the ship (shield is shown as bubble).
+    if (state.mode === 'play') drawEffectChips(env, state);
+  }
 
   if (shaking) env.ctx.restore();
 }
@@ -96,13 +112,13 @@ function drawShip(env: Env, state: GameState, alpha: number): void {
     const fl = SHIP_R + 6 + Math.random() * 4;
     env.ctx.beginPath();
     env.ctx.moveTo(
-      x + Math.cos(angle + back * 0.7) * (SHIP_R - 2),
-      y + Math.sin(angle + back * 0.7) * (SHIP_R - 2)
+      x + Math.cos(angle + back * 1) * (SHIP_R - 2),
+      y + Math.sin(angle + back * 1) * (SHIP_R - 2)
     );
     env.ctx.lineTo(x - Math.cos(angle) * fl, y - Math.sin(angle) * fl);
     env.ctx.lineTo(
-      x + Math.cos(angle - back * 0.7) * (SHIP_R - 2),
-      y + Math.sin(angle - back * 0.7) * (SHIP_R - 2)
+      x + Math.cos(angle - back * 1) * (SHIP_R - 2),
+      y + Math.sin(angle - back * 1) * (SHIP_R - 2)
     );
     env.ctx.stroke();
   }
@@ -151,6 +167,109 @@ function drawSaucer(env: Env, state: GameState, alpha: number): void {
     ctx.fill();
   }
   ctx.stroke();
+}
+
+/**
+ * Draw drifting powerup tokens on the play field. Each token is a small disc
+ * filled with the page background (to occlude the grid) with a coloured ring
+ * and a single glyph character identifying the effect type.
+ */
+function drawPowerups(env: Env, state: GameState): void {
+  const { ctx } = env;
+  const prevFont = ctx.font;
+  const prevAlign = ctx.textAlign;
+  const prevBaseline = ctx.textBaseline;
+  const prevLW = ctx.lineWidth;
+
+  ctx.font = 'bold 10px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 1.5;
+
+  for (const p of state.powerups) {
+    const color = POWERUP_COLORS[p.kind];
+    // Fill disc with background so the token occludes the grid behind it.
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${env.bg.rgb}, 1)`;
+    ctx.fill();
+    // Coloured ring.
+    ctx.strokeStyle = `rgba(${color}, ${PLAY_ALPHA})`;
+    ctx.stroke();
+    // Glyph letter centred inside.
+    ctx.fillStyle = `rgba(${color}, ${PLAY_ALPHA})`;
+    ctx.fillText(POWERUP_GLYPHS[p.kind], p.x, p.y);
+  }
+
+  // Restore canvas text state so subsequent draws aren't affected.
+  ctx.font = prevFont;
+  ctx.textAlign = prevAlign;
+  ctx.textBaseline = prevBaseline;
+  ctx.lineWidth = prevLW;
+}
+
+/**
+ * Draw a faint coloured halo around the ship while the shield is active.
+ * Flickers during the last 2 seconds to warn the player it's expiring.
+ */
+function drawShieldBubble(env: Env, state: GameState): void {
+  const { x, y } = state.ship;
+  const nearExpiry = state.shieldTimer < 2;
+  // Flicker at ~6 Hz near expiry; always visible otherwise.
+  if (nearExpiry && Math.floor(state.shieldTimer * 6) % 2 !== 0) return;
+  const prevLW = env.ctx.lineWidth;
+  env.ctx.strokeStyle = `rgba(${POWERUP_COLORS.shield}, 0.55)`;
+  env.ctx.lineWidth = 1.5;
+  env.ctx.beginPath();
+  env.ctx.arc(x, y, SHIP_R + 8, 0, Math.PI * 2);
+  env.ctx.stroke();
+  env.ctx.lineWidth = prevLW;
+}
+
+/**
+ * Draw small coloured glyph chips just below the ship to indicate active rapid
+ * and spread effects. Shield is already shown as the bubble above, so it's
+ * omitted here. Chips only appear while the respective timer is running.
+ */
+function drawEffectChips(env: Env, state: GameState): void {
+  const active: PowerupKind[] = [];
+  if (state.rapidTimer > 0) active.push('rapid');
+  if (state.spreadTimer > 0) active.push('spread');
+  if (active.length === 0) return;
+
+  const { ctx } = env;
+  const { x, y } = state.ship;
+  const chipY = y + SHIP_R + 18;
+  const spacing = 17;
+  const half = (active.length - 1) * spacing * 0.5;
+
+  const prevFont = ctx.font;
+  const prevAlign = ctx.textAlign;
+  const prevBaseline = ctx.textBaseline;
+  const prevLW = ctx.lineWidth;
+
+  ctx.font = 'bold 8px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 1;
+
+  active.forEach((kind, i) => {
+    const cx = x - half + i * spacing;
+    const color = POWERUP_COLORS[kind];
+    ctx.beginPath();
+    ctx.arc(cx, chipY, 7, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${env.bg.rgb}, 1)`;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(${color}, 0.8)`;
+    ctx.stroke();
+    ctx.fillStyle = `rgba(${color}, 0.8)`;
+    ctx.fillText(POWERUP_GLYPHS[kind], cx, chipY);
+  });
+
+  ctx.font = prevFont;
+  ctx.textAlign = prevAlign;
+  ctx.textBaseline = prevBaseline;
+  ctx.lineWidth = prevLW;
 }
 
 function drawAsteroid(env: Env, state: GameState, a: Asteroid, alpha: number): void {

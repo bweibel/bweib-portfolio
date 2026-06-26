@@ -4,10 +4,12 @@
  * of the game can be adjusted in one place.
  */
 
+import type { PowerupKind } from './types';
+
 // ---- Debug ----
 // TEMPORARY: start the page already in play mode for easier testing. Set back
 // to false (or remove) before shipping — the site should load in ambient.
-export const START_IN_PLAY = true;
+export const START_IN_PLAY = false;
 
 // ---- Ship / flight ----
 export const SHIP_R = 13; // px — ship size / collision radius
@@ -91,3 +93,38 @@ export const SAUCER_SPAWN_MAX_AMBIENT = 36;
 export const SAUCER_EDGE_MARGIN = 40; // px off-screen for spawn / despawn
 export const SAUCER_SHAKE = 3; // px shake on a saucer kill (play)
 export const SAUCER_EXPLOSION_COUNT = 10; // sparks on a saucer kill (play)
+
+// ---- Powerups ----
+export const POWERUP_DROP_CHANCE = 0.12; // probability a destroyed asteroid/saucer drops a token
+export const POWERUP_DURATION = 10; // s a timed effect (rapid, spread, shield) lasts
+export const POWERUP_FIELD_TTL = 8; // s before an uncollected field token expires
+export const POWERUP_R = 11; // collision + draw radius (px)
+export const POWERUP_DRIFT = 16; // px/s slow drift speed for field tokens
+export const RAPID_FIRE_COOLDOWN = 0.1; // s between shots while rapid-fire is active (vs FIRE_COOLDOWN)
+export const SPREAD_BULLETS = 3; // number of bullets in the fan shot
+export const SPREAD_ANGLE = 0.18; // rad between adjacent fan bullets
+
+// Per-kind colours as "r, g, b" strings — muted hues, one tasteful departure per type.
+export const POWERUP_COLORS: Record<PowerupKind, string> = {
+  rapid: '210, 160,  50', // amber
+  spread: ' 55, 190, 200', // cyan
+  shield: ' 55, 185, 110', // green
+  life: '220,  75, 140', // pink
+};
+
+// Single-character glyph drawn inside the token icon.
+export const POWERUP_GLYPHS: Record<PowerupKind, string> = {
+  rapid: 'R',
+  spread: '3',
+  shield: 'S',
+  life: '+',
+};
+
+// Weighted drop table: life ≈ 12 % of drops; the other three share the rest evenly.
+// Total = 88, life = 12  → life / (88 + 12) = 12 %.
+export const POWERUP_WEIGHTS: Record<PowerupKind, number> = {
+  rapid: 29,
+  spread: 30,
+  shield: 29,
+  life: 12,
+};

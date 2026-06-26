@@ -39,5 +39,9 @@ export function createState(env: Env): GameState {
     saucer: null,
     foeBullets: [],
     saucerTimer: saucerDelay('ambient'),
+    powerups: [],
+    rapidTimer: 0,
+    spreadTimer: 0,
+    shieldTimer: 0,
   };
 }

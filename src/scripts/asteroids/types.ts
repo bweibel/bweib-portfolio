@@ -13,6 +13,8 @@ import type { ThemeColor } from '../theme-color';
 
 export type Mode = 'ambient' | 'play';
 
+export type PowerupKind = 'rapid' | 'spread' | 'shield' | 'life';
+
 export interface Ship {
   x: number;
   y: number;
@@ -68,6 +70,20 @@ export interface Saucer {
   jinkTimer: number; // s until next vertical-velocity change
 }
 
+/**
+ * A powerup token drifting on the play field after an asteroid or saucer is
+ * destroyed by the player. Expires after POWERUP_FIELD_TTL seconds if uncollected.
+ */
+export interface Powerup {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  kind: PowerupKind;
+  ttl: number; // s until the token disappears (POWERUP_FIELD_TTL countdown)
+  r: number; // collision + draw radius (POWERUP_R)
+}
+
 /** Player intent. In ambient mode the bot writes these instead of the keyboard. */
 export interface Input {
   left: boolean;
@@ -120,4 +136,9 @@ export interface GameState {
   saucer: Saucer | null;
   foeBullets: Bullet[]; // saucer-fired bullets (reuse the Bullet shape)
   saucerTimer: number; // s until the next saucer spawn is allowed
+  // ---- Powerups ----
+  powerups: Powerup[]; // field tokens drifting after asteroid/saucer kills (play only)
+  rapidTimer: number; // s remaining for rapid-fire effect (0 = inactive)
+  spreadTimer: number; // s remaining for spread-shot effect (0 = inactive)
+  shieldTimer: number; // s remaining for shield effect; ship is invulnerable while > 0
 }

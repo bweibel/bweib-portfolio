@@ -36,6 +36,11 @@ export function resetPlay(env: Env, state: GameState): void {
   state.saucer = null;
   state.foeBullets = [];
   state.saucerTimer = saucerDelay('play');
+  // Clear any powerup tokens and active-effect timers so they don't survive a restart.
+  state.powerups = [];
+  state.rapidTimer = 0;
+  state.spreadTimer = 0;
+  state.shieldTimer = 0;
   advanceWave(env, state); // seeds wave 1 and calls updateHud
 }
 
@@ -77,4 +82,9 @@ export function exitPlay(env: Env, state: GameState): void {
   state.saucer = null;
   state.foeBullets = [];
   state.saucerTimer = saucerDelay('ambient');
+  // Clear powerups and effect timers so nothing leaks into ambient mode.
+  state.powerups = [];
+  state.rapidTimer = 0;
+  state.spreadTimer = 0;
+  state.shieldTimer = 0;
 }

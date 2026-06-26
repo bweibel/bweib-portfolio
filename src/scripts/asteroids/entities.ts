@@ -10,6 +10,12 @@ import {
   BULLET_SPEED,
   BULLET_TTL,
   FIRE_COOLDOWN,
+  POWERUP_DRIFT,
+  POWERUP_DROP_CHANCE,
+  POWERUP_FIELD_TTL,
+  POWERUP_R,
+  POWERUP_WEIGHTS,
+  RAPID_FIRE_COOLDOWN,
   SAUCER_BULLET_SPEED,
   SHIP_R,
   SAUCER_BULLET_TTL,
@@ -22,9 +28,11 @@ import {
   SAUCER_R_SMALL,
   SAUCER_SMALL_CHANCE_BASE,
   SAUCER_SPEED,
+  SPREAD_ANGLE,
+  SPREAD_BULLETS,
 } from './config';
 import { aimSpread, smallChance, waveSpeedMul } from './progression';
-import type { Asteroid, Env, GameState, Saucer } from './types';
+import type { Asteroid, Env, GameState, Powerup, PowerupKind, Saucer } from './types';
 
 export function makeAsteroid(
   env: Env,
@@ -114,15 +122,72 @@ export function fireSaucer(state: GameState, saucer: Saucer): void {
   });
 }
 
-export function fire(env: Env, state: GameState): void {
+/** Weighted-random powerup kind selection based on POWERUP_WEIGHTS. */
+function pickKind(): PowerupKind {
+  const kinds: PowerupKind[] = ['rapid', 'spread', 'shield', 'life'];
+  const total = kinds.reduce((s, k) => s + POWERUP_WEIGHTS[k], 0);
+  let r = Math.random() * total;
+  for (const k of kinds) {
+    r -= POWERUP_WEIGHTS[k];
+    if (r <= 0) return k;
+  }
+  return kinds[0];
+}
+
+/** Create a drifting powerup token at (x, y) of the given kind. */
+export function makePowerup(_env: Env, x: number, y: number, kind: PowerupKind): Powerup {
+  const dir = Math.random() * Math.PI * 2;
+  return {
+    x,
+    y,
+    vx: Math.cos(dir) * POWERUP_DRIFT,
+    vy: Math.sin(dir) * POWERUP_DRIFT,
+    kind,
+    ttl: POWERUP_FIELD_TTL,
+    r: POWERUP_R,
+  };
+}
+
+/**
+ * Maybe drop a powerup token at (x, y) when an enemy is destroyed by the
+ * player. Play mode only; ambient drops are never created.
+ */
+export function maybeDropPowerup(env: Env, state: GameState, x: number, y: number): void {
+  if (state.mode !== 'play') return;
+  if (Math.random() >= POWERUP_DROP_CHANCE) return;
+  state.powerups.push(makePowerup(env, x, y, pickKind()));
+}
+
+export function fire(_env: Env, state: GameState): void {
   const ship = state.ship;
   if (ship.cooldown > 0) return;
-  ship.cooldown = FIRE_COOLDOWN;
-  state.bullets.push({
-    x: ship.x + Math.cos(ship.angle) * SHIP_R,
-    y: ship.y + Math.sin(ship.angle) * SHIP_R,
-    vx: ship.vx + Math.cos(ship.angle) * BULLET_SPEED,
-    vy: ship.vy + Math.sin(ship.angle) * BULLET_SPEED,
-    ttl: BULLET_TTL,
-  });
+  // Rapid-fire powerup shortens the cooldown.
+  ship.cooldown = state.rapidTimer > 0 ? RAPID_FIRE_COOLDOWN : FIRE_COOLDOWN;
+
+  // Spawn point is always the ship's nose (based on ship.angle, not spread angle).
+  const nx = ship.x + Math.cos(ship.angle) * SHIP_R;
+  const ny = ship.y + Math.sin(ship.angle) * SHIP_R;
+
+  if (state.spreadTimer > 0) {
+    // Fan of SPREAD_BULLETS bullets centred on the ship's heading.
+    const half = Math.floor(SPREAD_BULLETS / 2);
+    for (let i = -half; i <= half; i++) {
+      const a = ship.angle + i * SPREAD_ANGLE;
+      state.bullets.push({
+        x: nx,
+        y: ny,
+        vx: ship.vx + Math.cos(a) * BULLET_SPEED,
+        vy: ship.vy + Math.sin(a) * BULLET_SPEED,
+        ttl: BULLET_TTL,
+      });
+    }
+  } else {
+    state.bullets.push({
+      x: nx,
+      y: ny,
+      vx: ship.vx + Math.cos(ship.angle) * BULLET_SPEED,
+      vy: ship.vy + Math.sin(ship.angle) * BULLET_SPEED,
+      ttl: BULLET_TTL,
+    });
+  }
 }

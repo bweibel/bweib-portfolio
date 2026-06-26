@@ -12,6 +12,7 @@ import {
   AST_SCORE,
   EXPLOSION_BASE_COUNT,
   EXPLOSION_SPEED,
+  POWERUP_DURATION,
   SAUCER_EXPLOSION_COUNT,
   SAUCER_SCORE_LARGE,
   SAUCER_SCORE_SMALL,
@@ -21,7 +22,7 @@ import {
   SHIP_R,
 } from './config';
 import { addShake, spawnExplosion } from './effects';
-import { makeAsteroid } from './entities';
+import { makeAsteroid, maybeDropPowerup } from './entities';
 import { updateHud } from './hud';
 import { commitHighScore } from './persist';
 import { advanceWave, waveSpeedMul } from './progression';
@@ -44,6 +45,8 @@ export function handleCollisions(env: Env, state: GameState): void {
           // Spawn debris; largest rocks also add a gentle shake.
           spawnExplosion(state, a.x, a.y, EXPLOSION_BASE_COUNT + a.tier * 3, EXPLOSION_SPEED);
           if (a.tier === 2) addShake(state, SHAKE_ROCK);
+          // Player-bullet kills may drop a powerup token at the kill site.
+          maybeDropPowerup(env, state, a.x, a.y);
         } else {
           // Ambient: a toned-down spark burst (no shake), drawn faintly in render.
           spawnExplosion(state, a.x, a.y, AMBIENT_EXPLOSION_COUNT, AMBIENT_EXPLOSION_SPEED);
@@ -59,8 +62,13 @@ export function handleCollisions(env: Env, state: GameState): void {
     }
   }
 
-  // Asteroid → ship (only consequential while playing and vulnerable).
-  if (state.mode === 'play' && !state.gameOver && state.ship.invuln <= 0) {
+  // Asteroid → ship (only consequential while playing and vulnerable; shield also blocks).
+  if (
+    state.mode === 'play' &&
+    !state.gameOver &&
+    state.ship.invuln <= 0 &&
+    state.shieldTimer <= 0
+  ) {
     for (const a of state.asteroids) {
       if (Math.hypot(a.x - state.ship.x, a.y - state.ship.y) < a.r + SHIP_R) {
         state.lives -= 1;
@@ -101,6 +109,8 @@ export function handleCollisions(env: Env, state: GameState): void {
           spawnExplosion(state, s.x, s.y, SAUCER_EXPLOSION_COUNT, EXPLOSION_SPEED);
           addShake(state, SAUCER_SHAKE);
           updateHud(env, state);
+          // Player-bullet kill may drop a powerup token at the saucer's position.
+          maybeDropPowerup(env, state, s.x, s.y);
         } else {
           spawnExplosion(state, s.x, s.y, AMBIENT_EXPLOSION_COUNT, AMBIENT_EXPLOSION_SPEED);
         }
@@ -134,8 +144,13 @@ export function handleCollisions(env: Env, state: GameState): void {
     }
   }
 
-  // Foe bullet → ship (play mode only, while the ship is vulnerable).
-  if (state.mode === 'play' && !state.gameOver && state.ship.invuln <= 0) {
+  // Foe bullet → ship (play mode only, while the ship is vulnerable; shield also blocks).
+  if (
+    state.mode === 'play' &&
+    !state.gameOver &&
+    state.ship.invuln <= 0 &&
+    state.shieldTimer <= 0
+  ) {
     for (let j = state.foeBullets.length - 1; j >= 0; j--) {
       const b = state.foeBullets[j];
       if (Math.hypot(state.ship.x - b.x, state.ship.y - b.y) < SHIP_R) {
@@ -155,8 +170,14 @@ export function handleCollisions(env: Env, state: GameState): void {
     }
   }
 
-  // Ship → saucer body (play mode only, while the ship is vulnerable).
-  if (state.saucer && state.mode === 'play' && !state.gameOver && state.ship.invuln <= 0) {
+  // Ship → saucer body (play mode only, while the ship is vulnerable; shield also blocks).
+  if (
+    state.saucer &&
+    state.mode === 'play' &&
+    !state.gameOver &&
+    state.ship.invuln <= 0 &&
+    state.shieldTimer <= 0
+  ) {
     const s = state.saucer;
     if (Math.hypot(state.ship.x - s.x, state.ship.y - s.y) < s.r + SHIP_R) {
       // Saucer explodes (no score for a ram).
@@ -175,6 +196,33 @@ export function handleCollisions(env: Env, state: GameState): void {
         state.ship = spawnShip(env);
       }
       updateHud(env, state);
+    }
+  }
+
+  // Ship → powerup pickup (play mode only; works regardless of invuln or shield).
+  if (state.mode === 'play' && !state.gameOver) {
+    for (let i = state.powerups.length - 1; i >= 0; i--) {
+      const p = state.powerups[i];
+      if (Math.hypot(p.x - state.ship.x, p.y - state.ship.y) < p.r + SHIP_R) {
+        state.powerups.splice(i, 1);
+        switch (p.kind) {
+          case 'rapid':
+            state.rapidTimer = POWERUP_DURATION;
+            break;
+          case 'spread':
+            state.spreadTimer = POWERUP_DURATION;
+            break;
+          case 'shield':
+            state.shieldTimer = POWERUP_DURATION;
+            break;
+          case 'life':
+            state.lives += 1;
+            updateHud(env, state);
+            break;
+        }
+        // Small pop at pickup location for tactile feedback.
+        spawnExplosion(state, p.x, p.y, 4, EXPLOSION_SPEED * 0.45);
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
  * module only moves things and ages them.
  */
 
-import { TURN_RATE, THRUST, FRICTION } from './config';
+import { FRICTION, THRUST, TURN_RATE } from './config';
 import { wrap } from './math';
 import { fire } from './entities';
 import type { Env, GameState } from './types';
@@ -29,6 +29,10 @@ export function updatePhysics(env: Env, state: GameState, dt: number): void {
     state.ship.y = wrap(state.ship.y + state.ship.vy * dt, env.height);
     state.ship.cooldown = Math.max(0, state.ship.cooldown - dt);
     state.ship.invuln = Math.max(0, state.ship.invuln - dt);
+    // Active powerup effect timers count down while the ship is being piloted.
+    state.rapidTimer = Math.max(0, state.rapidTimer - dt);
+    state.spreadTimer = Math.max(0, state.spreadTimer - dt);
+    state.shieldTimer = Math.max(0, state.shieldTimer - dt);
   }
 
   // Bullets
@@ -54,5 +58,14 @@ export function updatePhysics(env: Env, state: GameState, dt: number): void {
     a.x = wrap(a.x + a.vx * dt, env.width);
     a.y = wrap(a.y + a.vy * dt, env.height);
     a.rot += a.spin * dt;
+  }
+
+  // Powerup field tokens: drift with wrap and expire when their ttl runs out.
+  for (let i = state.powerups.length - 1; i >= 0; i--) {
+    const p = state.powerups[i];
+    p.x = wrap(p.x + p.vx * dt, env.width);
+    p.y = wrap(p.y + p.vy * dt, env.height);
+    p.ttl -= dt;
+    if (p.ttl <= 0) state.powerups.splice(i, 1);
   }
 }
