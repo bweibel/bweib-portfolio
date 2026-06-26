@@ -4,11 +4,7 @@
  * module only moves things and ages them.
  */
 
-import {
-  TURN_RATE,
-  THRUST,
-  FRICTION,
-} from './config';
+import { TURN_RATE, THRUST, FRICTION } from './config';
 import { wrap } from './math';
 import { fire } from './entities';
 import type { Env, GameState } from './types';
@@ -42,6 +38,15 @@ export function updatePhysics(env: Env, state: GameState, dt: number): void {
     b.y = wrap(b.y + b.vy * dt, env.height);
     b.ttl -= dt;
     if (b.ttl <= 0) state.bullets.splice(i, 1);
+  }
+
+  // Foe bullets (saucer-fired; mirroring the player-bullet loop above)
+  for (let i = state.foeBullets.length - 1; i >= 0; i--) {
+    const b = state.foeBullets[i];
+    b.x = wrap(b.x + b.vx * dt, env.width);
+    b.y = wrap(b.y + b.vy * dt, env.height);
+    b.ttl -= dt;
+    if (b.ttl <= 0) state.foeBullets.splice(i, 1);
   }
 
   // Asteroids

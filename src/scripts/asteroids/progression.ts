@@ -6,6 +6,12 @@
 
 import {
   PLAY_WAVE,
+  SAUCER_AIM_SPREAD_MAX,
+  SAUCER_AIM_SPREAD_MIN,
+  SAUCER_AIM_TIGHTEN_AT,
+  SAUCER_SMALL_CHANCE_AT,
+  SAUCER_SMALL_CHANCE_BASE,
+  SAUCER_SMALL_CHANCE_MAX,
   WAVE_GROWTH,
   WAVE_MAX_ASTEROIDS,
   WAVE_SPEED_MAX,
@@ -27,6 +33,24 @@ export function waveAsteroidCount(wave: number): number {
 export function waveSpeedMul(state: GameState): number {
   if (state.mode !== 'play') return 1;
   return Math.min(WAVE_SPEED_MAX, 1 + (state.wave - 1) * WAVE_SPEED_RAMP);
+}
+
+/**
+ * Probability that the next saucer spawn is the small (aimed) variant.
+ * Lerps from BASE → MAX over [0, SAUCER_SMALL_CHANCE_AT].
+ */
+export function smallChance(score: number): number {
+  const t = Math.min(1, score / SAUCER_SMALL_CHANCE_AT);
+  return SAUCER_SMALL_CHANCE_BASE + t * (SAUCER_SMALL_CHANCE_MAX - SAUCER_SMALL_CHANCE_BASE);
+}
+
+/**
+ * Aim spread (radians) for the small saucer at the given score.
+ * Lerps from MAX → MIN over [0, SAUCER_AIM_TIGHTEN_AT].
+ */
+export function aimSpread(score: number): number {
+  const t = Math.min(1, score / SAUCER_AIM_TIGHTEN_AT);
+  return SAUCER_AIM_SPREAD_MAX - t * (SAUCER_AIM_SPREAD_MAX - SAUCER_AIM_SPREAD_MIN);
 }
 
 /**

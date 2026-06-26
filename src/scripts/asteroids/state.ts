@@ -5,6 +5,7 @@
 
 import { RESPAWN_INVULN, START_LIVES } from './config';
 import { loadHighScore } from './persist';
+import { saucerDelay } from './saucer';
 import type { Env, GameState, Ship } from './types';
 
 /** A fresh ship at the centre of the field, nose up, briefly invulnerable. */
@@ -35,5 +36,8 @@ export function createState(env: Env): GameState {
     particles: [],
     shake: 0,
     input: { left: false, right: false, thrust: false, fire: false },
+    saucer: null,
+    foeBullets: [],
+    saucerTimer: saucerDelay('ambient'),
   };
 }

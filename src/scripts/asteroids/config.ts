@@ -57,3 +57,37 @@ export const SHAKE_DECAY = 12; // px/s rate at which shake decays toward zero
 export const AMBIENT_EXPLOSION_COUNT = 3; // sparks per rock kill in ambient
 export const AMBIENT_EXPLOSION_SPEED = 45; // px/s max speed for ambient sparks
 export const AMBIENT_PARTICLE_ALPHA = 0.3; // opacity multiplier for ambient particles
+
+// ---- Flying saucer ----
+export const SAUCER_R_LARGE = 18;
+export const SAUCER_R_SMALL = 11;
+export const SAUCER_SPEED = 92; // px/s horizontal cross speed
+export const SAUCER_VY_MAX = 46; // px/s max vertical drift magnitude
+export const SAUCER_JINK_MIN = 0.7; // s between vertical-direction changes
+export const SAUCER_JINK_MAX = 1.6;
+export const SAUCER_BULLET_SPEED = 300; // px/s
+export const SAUCER_BULLET_TTL = 1.4; // s
+export const SAUCER_FIRE_INTERVAL = 1.25; // s between shots (large)
+export const SAUCER_FIRE_INTERVAL_SMALL = 1.05;
+export const SAUCER_SCORE_LARGE = 150;
+export const SAUCER_SCORE_SMALL = 400;
+
+// Small-saucer aim spread (rad): wide at low score, tightens as the player scores.
+export const SAUCER_AIM_SPREAD_MAX = 0.35; // at score 0
+export const SAUCER_AIM_SPREAD_MIN = 0.06; // at/above SAUCER_AIM_TIGHTEN_AT
+export const SAUCER_AIM_TIGHTEN_AT = 6000; // score at which spread bottoms out
+
+// Probability a given spawn is the small (aimed) saucer; rises with score.
+export const SAUCER_SMALL_CHANCE_BASE = 0.2;
+export const SAUCER_SMALL_CHANCE_MAX = 0.85;
+export const SAUCER_SMALL_CHANCE_AT = 8000; // score at which the max is reached
+
+// Spawn cadence (seconds, randomised in range). Play is frequent; ambient calm.
+export const SAUCER_SPAWN_MIN_PLAY = 8;
+export const SAUCER_SPAWN_MAX_PLAY = 16;
+export const SAUCER_SPAWN_MIN_AMBIENT = 18;
+export const SAUCER_SPAWN_MAX_AMBIENT = 36;
+
+export const SAUCER_EDGE_MARGIN = 40; // px off-screen for spawn / despawn
+export const SAUCER_SHAKE = 3; // px shake on a saucer kill (play)
+export const SAUCER_EXPLOSION_COUNT = 10; // sparks on a saucer kill (play)

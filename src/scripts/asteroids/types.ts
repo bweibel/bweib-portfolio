@@ -57,6 +57,17 @@ export interface Particle {
   r: number; // dot radius (px)
 }
 
+export interface Saucer {
+  x: number;
+  y: number;
+  vx: number; // horizontal cross velocity (sign = travel direction)
+  vy: number; // current vertical drift; re-rolled on each "jink"
+  small: boolean; // true = small/aimed/deadlier; false = large/random
+  r: number; // collision + draw radius
+  fireTimer: number; // s until next shot
+  jinkTimer: number; // s until next vertical-velocity change
+}
+
 /** Player intent. In ambient mode the bot writes these instead of the keyboard. */
 export interface Input {
   left: boolean;
@@ -106,4 +117,7 @@ export interface GameState {
   particles: Particle[]; // visual-only sparks; empty in ambient mode
   shake: number; // current camera-shake magnitude (px); decays each frame
   input: Input;
+  saucer: Saucer | null;
+  foeBullets: Bullet[]; // saucer-fired bullets (reuse the Bullet shape)
+  saucerTimer: number; // s until the next saucer spawn is allowed
 }

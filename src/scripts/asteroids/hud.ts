@@ -8,6 +8,7 @@
 import { START_LIVES } from './config';
 import { commitHighScore } from './persist';
 import { advanceWave } from './progression';
+import { saucerDelay } from './saucer';
 import { spawnShip } from './state';
 import type { Env, GameState } from './types';
 
@@ -32,6 +33,9 @@ export function resetPlay(env: Env, state: GameState): void {
   // arrows turn) doesn't carry into the fresh game.
   state.input.left = state.input.right = state.input.fire = false;
   state.ship = spawnShip(env);
+  state.saucer = null;
+  state.foeBullets = [];
+  state.saucerTimer = saucerDelay('play');
   advanceWave(env, state); // seeds wave 1 and calls updateHud
 }
 
@@ -69,4 +73,8 @@ export function exitPlay(env: Env, state: GameState): void {
   state.particles = [];
   state.shake = 0;
   state.ship = spawnShip(env);
+  // Clear saucer state and reschedule on the ambient cadence.
+  state.saucer = null;
+  state.foeBullets = [];
+  state.saucerTimer = saucerDelay('ambient');
 }

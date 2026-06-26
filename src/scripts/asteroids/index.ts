@@ -35,6 +35,7 @@ import { botThink } from './bot';
 import { render } from './render';
 import { enterPlay, exitPlay, resetPlay } from './hud';
 import { wireInput } from './input';
+import { updateSaucer } from './saucer';
 
 function init() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -88,6 +89,7 @@ function init() {
     }
 
     updatePhysics(env, state, dt);
+    updateSaucer(env, state, dt);
     handleCollisions(env, state);
     // Effects run after collisions so the burst from a death hit is included
     // in the same frame. Runs in both modes (even when gameOver, so the death
