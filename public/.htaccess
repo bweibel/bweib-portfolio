@@ -9,3 +9,15 @@
     Deny from all
   </IfModule>
 </Files>
+
+# Deny direct access to the Asteroids leaderboard store. It lives in the web root
+# (the dir above isn't writable on this host) and is read/written only by
+# scores.php server-side; clients use the JSON API, never the raw file.
+<Files "scores.json">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</Files>

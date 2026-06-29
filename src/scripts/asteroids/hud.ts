@@ -6,6 +6,7 @@
  */
 
 import { START_LIVES } from './config';
+import { onEnterPlay } from './leaderboard';
 import { commitHighScore } from './persist';
 import { advanceWave } from './progression';
 import { saucerDelay } from './saucer';
@@ -15,7 +16,9 @@ import type { Env, GameState } from './types';
 export function updateHud(env: Env, state: GameState): void {
   if (env.scoreEl) env.scoreEl.textContent = String(state.score);
   if (env.livesEl) env.livesEl.textContent = String(Math.max(0, state.lives));
-  if (env.messageEl) env.messageEl.hidden = !state.gameOver;
+  // The game-over panel (board + new-score form) is shown whenever the run has
+  // ended; leaderboard.ts manages what's inside it.
+  if (env.overEl) env.overEl.hidden = !state.gameOver;
   if (env.waveEl) env.waveEl.textContent = String(state.wave);
   if (env.bestEl) env.bestEl.textContent = String(Math.max(state.score, state.highScore));
 }
@@ -41,6 +44,10 @@ export function resetPlay(env: Env, state: GameState): void {
   state.rapidTimer = 0;
   state.spreadTimer = 0;
   state.shieldTimer = 0;
+  // Arm a fresh run for the leaderboard: clear the one-shot guard and hide any
+  // leftover new-score form from the previous game-over.
+  state.scoreSubmitted = false;
+  if (env.newScoreEl) env.newScoreEl.hidden = true;
   advanceWave(env, state); // seeds wave 1 and calls updateHud
 }
 
@@ -62,6 +69,7 @@ export function enterPlay(env: Env, state: GameState): void {
   env.root.dataset.game = 'play';
   env.toggleBtn?.setAttribute('aria-pressed', 'true');
   document.dispatchEvent(new CustomEvent('grid:pause'));
+  onEnterPlay(env, state); // prefetch the leaderboard for this session
   resetPlay(env, state);
 }
 

@@ -54,8 +54,10 @@ jobs:
 
           # Trailing slash on dist/ uploads its *contents* into DEPLOY_PATH.
           # --delete mirrors the directory, removing files no longer in the build.
-          # --exclude protects the server-only SMTP secrets file (created by hand
-          # in the web root) from being deleted; it never exists in the build.
-          rsync -avz --delete --exclude 'mail-secrets.php' \
+          # --exclude protects server-only files that live in the web root but
+          # never exist in the build: the SMTP secrets (created by hand) and the
+          # Asteroids leaderboard store (written by scores.php at runtime).
+          rsync -avz --delete \
+            --exclude 'mail-secrets.php' --exclude 'scores.json' \
             -e "ssh $SSH_OPTS" \
             dist/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"

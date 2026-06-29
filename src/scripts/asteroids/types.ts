@@ -15,6 +15,13 @@ export type Mode = 'ambient' | 'play';
 
 export type PowerupKind = 'rapid' | 'spread' | 'shield' | 'life';
 
+/** One row of the shared high-score table (see leaderboard.ts + scores.php). */
+export interface ScoreEntry {
+  name: string;
+  score: number;
+  wave: number;
+}
+
 export interface Ship {
   x: number;
   y: number;
@@ -111,12 +118,20 @@ export interface Env {
   // HUD / overlay DOM (lives in GameBackground.astro); any may be absent.
   scoreEl: HTMLElement | null;
   livesEl: HTMLElement | null;
-  messageEl: HTMLElement | null;
   waveEl: HTMLElement | null;
   bestEl: HTMLElement | null;
   toggleBtn: HTMLButtonElement | null;
   /** Transient "Wave N" banner shown at the start of each play-mode wave. */
   bannerEl: HTMLElement | null;
+  // ---- Game-over panel / leaderboard DOM (see GameBackground.astro) ----
+  /** The game-over panel container; shown on death, hidden otherwise. */
+  overEl: HTMLElement | null;
+  /** Container the leaderboard rows are rendered into. */
+  boardEl: HTMLElement | null;
+  /** New-high-score form, revealed only when the run cracks the top list. */
+  newScoreEl: HTMLFormElement | null;
+  /** Name field inside the new-score form. */
+  nameInputEl: HTMLInputElement | null;
 }
 
 /** All mutable per-frame game data. */
@@ -141,4 +156,7 @@ export interface GameState {
   rapidTimer: number; // s remaining for rapid-fire effect (0 = inactive)
   spreadTimer: number; // s remaining for spread-shot effect (0 = inactive)
   shieldTimer: number; // s remaining for shield effect; ship is invulnerable while > 0
+  // ---- Leaderboard ----
+  leaderboard: ScoreEntry[]; // cached top scores; refreshed on enter-play + submit
+  scoreSubmitted: boolean; // one-shot guard: true once this run's game-over is handled
 }

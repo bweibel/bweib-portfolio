@@ -11,6 +11,11 @@ import type { PowerupKind } from './types';
 // to false (or remove) before shipping — the site should load in ambient.
 export const START_IN_PLAY = false;
 
+// TEMPORARY: on load, open the game-over panel with a seeded sample leaderboard
+// and the new-high-score form visible, so the panel can be styled without
+// playing a round. Set back to false before shipping.
+export const DEBUG_GAME_OVER = false;
+
 // ---- Ship / flight ----
 export const SHIP_R = 13; // px — ship size / collision radius
 export const TURN_RATE = 4.2; // rad/s
@@ -123,8 +128,8 @@ export const POWERUP_GLYPHS: Record<PowerupKind, string> = {
 // Weighted drop table: life ≈ 12 % of drops; the other three share the rest evenly.
 // Total = 88, life = 12  → life / (88 + 12) = 12 %.
 export const POWERUP_WEIGHTS: Record<PowerupKind, number> = {
-  rapid: 29,
+  rapid: 45,
   spread: 30,
-  shield: 29,
-  life: 12,
+  shield: 20,
+  life: 5,
 };

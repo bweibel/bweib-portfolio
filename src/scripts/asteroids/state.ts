@@ -43,5 +43,7 @@ export function createState(env: Env): GameState {
     rapidTimer: 0,
     spreadTimer: 0,
     shieldTimer: 0,
+    leaderboard: [],
+    scoreSubmitted: false,
   };
 }

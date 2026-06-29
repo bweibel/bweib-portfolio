@@ -20,7 +20,7 @@ export function wireInput(
     enterPlay: () => void;
     exitPlay: () => void;
     resetPlay: () => void;
-  },
+  }
 ): void {
   // ---- Keyboard (only while playing, so the rest of the page is untouched) ----
   function keyFlag(e: KeyboardEvent, down: boolean): boolean {
@@ -49,12 +49,18 @@ export function wireInput(
     }
   }
 
+  // True while the visitor is typing into the game-over name field, so we leave
+  // those keystrokes (incl. Space/Enter) to the input instead of steering a dead
+  // ship or restarting mid-entry.
+  const typingName = () => env.nameInputEl != null && document.activeElement === env.nameInputEl;
+
   document.addEventListener('keydown', (e) => {
     if (state.mode !== 'play') return;
     if (e.key === 'Escape') {
       handlers.exitPlay();
       return;
     }
+    if (typingName()) return;
     if (state.gameOver && (e.key === ' ' || e.key === 'Enter')) {
       handlers.resetPlay();
       e.preventDefault();
@@ -64,6 +70,7 @@ export function wireInput(
   });
   document.addEventListener('keyup', (e) => {
     if (state.mode !== 'play') return;
+    if (typingName()) return;
     if (keyFlag(e, false)) e.preventDefault();
   });
 

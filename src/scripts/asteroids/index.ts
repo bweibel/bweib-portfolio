@@ -24,7 +24,7 @@
  */
 
 import { trackThemeBackground, trackThemeColor } from '../theme-color';
-import { AMBIENT_TARGET, START_IN_PLAY } from './config';
+import { AMBIENT_TARGET, DEBUG_GAME_OVER, START_IN_PLAY } from './config';
 import type { Env, GameState } from './types';
 import { createState } from './state';
 import { seedAsteroids, spawnAwayFromShip } from './entities';
@@ -36,6 +36,7 @@ import { render } from './render';
 import { enterPlay, exitPlay, resetPlay } from './hud';
 import { wireInput } from './input';
 import { updateSaucer } from './saucer';
+import { debugShowGameOver, handleGameOver, wireLeaderboard } from './leaderboard';
 
 function init() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -58,11 +59,14 @@ function init() {
     root: document.documentElement,
     scoreEl: document.querySelector<HTMLElement>('[data-game-score]'),
     livesEl: document.querySelector<HTMLElement>('[data-game-lives]'),
-    messageEl: document.querySelector<HTMLElement>('[data-game-message]'),
     waveEl: document.querySelector<HTMLElement>('[data-game-wave]'),
     bestEl: document.querySelector<HTMLElement>('[data-game-best]'),
     toggleBtn: document.querySelector<HTMLButtonElement>('.game-toggle'),
     bannerEl: document.querySelector<HTMLElement>('[data-game-wave-banner]'),
+    overEl: document.querySelector<HTMLElement>('[data-game-over]'),
+    boardEl: document.querySelector<HTMLElement>('[data-game-board]'),
+    newScoreEl: document.querySelector<HTMLFormElement>('[data-game-newscore]'),
+    nameInputEl: document.querySelector<HTMLInputElement>('[data-game-name]'),
   };
 
   // ---- Sizing ----
@@ -97,6 +101,13 @@ function init() {
     updateEffects(state, dt);
     // Thrust sparks are emitted here (not in physics.ts) to keep physics pure.
     if (state.mode === 'play' && state.input.thrust) spawnThrust(state, env);
+
+    // On the first frame a play run ends, drive the game-over panel: render the
+    // leaderboard and, if the score qualifies, prompt for a name. handleGameOver
+    // is one-shot via state.scoreSubmitted (reset on each new run).
+    if (state.mode === 'play' && state.gameOver && !state.scoreSubmitted) {
+      handleGameOver(env, state);
+    }
   }
 
   // ---- Main loop ----
@@ -110,6 +121,7 @@ function init() {
   }
 
   // ---- Wiring ----
+  wireLeaderboard(env, state); // attach the new-score form's submit handler once
   seedAsteroids(env, state, AMBIENT_TARGET);
   canvas.classList.add('is-ready');
   env.toggleBtn?.removeAttribute('hidden'); // reveal the header button (motion is allowed here)
@@ -136,6 +148,10 @@ function init() {
 
   // TEMPORARY (config.START_IN_PLAY): jump straight into play mode for testing.
   if (START_IN_PLAY) enterPlay(env, state);
+
+  // TEMPORARY (config.DEBUG_GAME_OVER): open the game-over panel on load with a
+  // seeded leaderboard so its visuals can be tweaked without playing.
+  if (DEBUG_GAME_OVER) debugShowGameOver(env, state);
 }
 
 try {

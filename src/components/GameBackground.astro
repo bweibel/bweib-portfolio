@@ -29,9 +29,29 @@
 
   <p class="game-wave-banner bw-label" data-game-wave-banner aria-hidden="true"></p>
 
-  <p class="game-message bw-label" data-game-message hidden>
-    Game over — press Space or tap to restart
-  </p>
+  <div class="game-over" data-game-over hidden>
+    <p class="game-over-title bw-label">Game Over</p>
+    <div class="game-board" data-game-board></div>
+    <form class="game-newscore" data-game-newscore hidden>
+      <label class="game-newscore-label bw-label" for="game-name">
+        New high score — enter your initials
+      </label>
+      <div class="game-newscore-row">
+        <input
+          id="game-name"
+          data-game-name
+          type="text"
+          maxlength="3"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          placeholder="AAA"
+        />
+        <button type="submit">Save</button>
+      </div>
+    </form>
+    <p class="game-over-hint bw-label">Press Space or tap to restart</p>
+  </div>
 
   <div class="game-touch" aria-hidden="true">
     <div class="game-touch-left">
@@ -139,17 +159,143 @@
     stroke-linecap: round;
   }
 
-  .game-message {
+  /* Game-over panel: title + shared leaderboard + (conditional) name form. */
+  .game-over {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: var(--space-3) var(--space-4);
+    width: min(22rem, calc(100vw - 2 * var(--space-5)));
+    max-height: min(80vh, 36rem);
+    overflow: auto;
+    padding: var(--space-4) var(--space-5);
     background: var(--surface-card);
     border: var(--border-bold) solid var(--border-strong);
-    box-shadow: var(--shadow-hard-sm);
+    box-shadow: var(--shadow-hard);
     color: var(--text-strong);
     text-align: center;
+    pointer-events: auto; /* allow scrolling + form interaction */
+  }
+
+  .game-over-title {
+    margin: 0 0 var(--space-3);
+    color: var(--accent);
+    font-size: var(--text-lg);
+  }
+
+  /* Leaderboard rows: rank | name | score. The rows are created in JS (see
+     leaderboard.ts), so these selectors must be :global — Astro's scoped styles
+     only attach to elements present in this template, not to dynamic nodes. */
+  .game-board {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .game-board :global(.game-board-row) {
+    display: grid;
+    grid-template-columns: 1.75rem 1fr auto;
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-1) var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .game-board :global(.game-board-row.is-you) {
+    background: var(--accent);
+    color: var(--text-on-accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .game-board :global(.game-board-rank) {
+    color: var(--text-secondary);
+  }
+
+  .game-board :global(.game-board-row.is-you .game-board-rank) {
+    color: inherit;
+  }
+
+  .game-board :global(.game-board-name) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .game-board :global(.game-board-score) {
+    font-weight: var(--weight-bold);
+  }
+
+  .game-board :global(.game-board-empty) {
+    margin: var(--space-2) 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  /* New-high-score form. */
+  .game-newscore {
+    margin-top: var(--space-4);
+  }
+
+  .game-newscore-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--accent);
+  }
+
+  .game-newscore-row {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .game-newscore-row input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    /* Three-initial arcade entry: centred, spaced, always uppercase. */
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    text-indent: 0.5em; /* offset the trailing letter-spacing so glyphs sit centred */
+    color: var(--text-strong);
+    background: var(--surface-inset);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  .game-newscore-row input::placeholder {
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .game-newscore-row button {
+    flex: none;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-mono);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-on-accent);
+    background: var(--accent);
+    border: var(--border-bold) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .game-newscore-row button:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .game-over-hint {
+    margin: var(--space-4) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
   }
 
   /* "Wave N" transient banner — above centre so it never overlaps game-message. */
@@ -170,10 +316,22 @@
   }
 
   @keyframes wave-banner-show {
-    0%   { opacity: 0; transform: translateX(-50%) translateY(-4px); }
-    15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
-    70%  { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(2px); }
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-4px);
+    }
+    15% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    70% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(2px);
+    }
   }
 
   .game-wave-banner.is-shown {
