@@ -100,11 +100,17 @@ export const SAUCER_SHAKE = 3; // px shake on a saucer kill (play)
 export const SAUCER_EXPLOSION_COUNT = 10; // sparks on a saucer kill (play)
 
 // ---- Powerups ----
-export const POWERUP_DROP_CHANCE = 0.12; // probability a destroyed asteroid/saucer drops a token
+export const POWERUP_DROP_CHANCE = 1; // probability a destroyed saucer drops a token
 export const POWERUP_DURATION = 10; // s a timed effect (rapid, spread, shield) lasts
 export const POWERUP_FIELD_TTL = 8; // s before an uncollected field token expires
 export const POWERUP_R = 11; // collision + draw radius (px)
 export const POWERUP_DRIFT = 16; // px/s slow drift speed for field tokens
+// Magnetic pull: once the ship is within POWERUP_PULL_RADIUS, tokens accelerate
+// toward it (strength rises as it gets closer), capped at POWERUP_PULL_MAX_SPEED
+// so they home in smoothly rather than slingshotting past.
+export const POWERUP_PULL_RADIUS = 100; // px — range at which the pull kicks in
+export const POWERUP_PULL_ACCEL = 1200; // px/s² toward the ship at the edge → centre
+export const POWERUP_PULL_MAX_SPEED = 320; // px/s cap on pull-induced token speed
 export const RAPID_FIRE_COOLDOWN = 0.1; // s between shots while rapid-fire is active (vs FIRE_COOLDOWN)
 export const SPREAD_BULLETS = 3; // number of bullets in the fan shot
 export const SPREAD_ANGLE = 0.18; // rad between adjacent fan bullets

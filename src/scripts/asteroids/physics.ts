@@ -4,7 +4,14 @@
  * module only moves things and ages them.
  */
 
-import { FRICTION, THRUST, TURN_RATE } from './config';
+import {
+  FRICTION,
+  POWERUP_PULL_ACCEL,
+  POWERUP_PULL_MAX_SPEED,
+  POWERUP_PULL_RADIUS,
+  THRUST,
+  TURN_RATE,
+} from './config';
 import { wrap } from './math';
 import { fire } from './entities';
 import type { Env, GameState } from './types';
@@ -61,8 +68,27 @@ export function updatePhysics(env: Env, state: GameState, dt: number): void {
   }
 
   // Powerup field tokens: drift with wrap and expire when their ttl runs out.
+  // While the ship is alive, tokens within range are magnetically drawn to it.
   for (let i = state.powerups.length - 1; i >= 0; i--) {
     const p = state.powerups[i];
+
+    if (piloting) {
+      const dx = state.ship.x - p.x;
+      const dy = state.ship.y - p.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 0 && dist < POWERUP_PULL_RADIUS) {
+        // Pull strengthens from 0 at the edge to full at the ship.
+        const strength = 1 - dist / POWERUP_PULL_RADIUS;
+        p.vx += (dx / dist) * POWERUP_PULL_ACCEL * strength * dt;
+        p.vy += (dy / dist) * POWERUP_PULL_ACCEL * strength * dt;
+        const speed = Math.hypot(p.vx, p.vy);
+        if (speed > POWERUP_PULL_MAX_SPEED) {
+          p.vx = (p.vx / speed) * POWERUP_PULL_MAX_SPEED;
+          p.vy = (p.vy / speed) * POWERUP_PULL_MAX_SPEED;
+        }
+      }
+    }
+
     p.x = wrap(p.x + p.vx * dt, env.width);
     p.y = wrap(p.y + p.vy * dt, env.height);
     p.ttl -= dt;

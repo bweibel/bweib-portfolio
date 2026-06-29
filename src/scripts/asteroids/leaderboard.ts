@@ -77,7 +77,7 @@ function renderBoard(env: Env, state: GameState, highlightRank = 0): void {
   if (state.leaderboard.length === 0) {
     const empty = document.createElement('p');
     empty.className = 'game-board-empty';
-    empty.textContent = 'No scores yet — be the first.';
+    empty.textContent = 'No scores yet';
     el.append(empty);
     return;
   }

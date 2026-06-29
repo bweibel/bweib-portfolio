@@ -45,8 +45,7 @@ export function handleCollisions(env: Env, state: GameState): void {
           // Spawn debris; largest rocks also add a gentle shake.
           spawnExplosion(state, a.x, a.y, EXPLOSION_BASE_COUNT + a.tier * 3, EXPLOSION_SPEED);
           if (a.tier === 2) addShake(state, SHAKE_ROCK);
-          // Player-bullet kills may drop a powerup token at the kill site.
-          maybeDropPowerup(env, state, a.x, a.y);
+          // Powerups drop only from saucers (see the saucer-kill branch), not rocks.
         } else {
           // Ambient: a toned-down spark burst (no shake), drawn faintly in render.
           spawnExplosion(state, a.x, a.y, AMBIENT_EXPLOSION_COUNT, AMBIENT_EXPLOSION_SPEED);
