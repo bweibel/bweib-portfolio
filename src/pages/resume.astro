@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Resume from '../components/Resume.astro';
+import Button from '../components/Button.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
 ---
@@ -15,6 +16,9 @@ import { site } from '../data/site';
   <Header />
   <main>
     <div class="container">
+      <div class="toolbar" data-reveal>
+        <Button href="/resume.pdf" variant="accent-3" size="sm" download>Download PDF</Button>
+      </div>
       <Resume />
     </div>
   </main>
@@ -26,5 +30,11 @@ import { site } from '../data/site';
     max-width: var(--max-width);
     margin-inline: auto;
     padding-inline: var(--space-5);
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: var(--space-8);
   }
 </style>

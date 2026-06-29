@@ -1,0 +1,307 @@
+---
+/*
+ * Print-only resume — the source page Puppeteer renders to dist/resume.pdf at
+ * build time (see scripts/build-pdf.mjs). Deliberately standalone: it does NOT
+ * use BaseLayout, so there is no nav, footer, game background, theme toggle, or
+ * animation. A clean, paper-styled, single-purpose document built straight from
+ * resume.json so the PDF never drifts from the online resume.
+ *
+ * It is also a real route, so visitors can open /resume-print and use the
+ * browser's own "Save as PDF" if they prefer.
+ */
+import { resume } from '../data/resume';
+import { site } from '../data/site';
+import { formatDateRange } from '../lib/dates';
+
+const { basics } = resume;
+
+// Location as "City, REGION" when present.
+const location = [basics.location?.city, basics.location?.region].filter(Boolean).join(', ');
+
+// Contact line items: plain text + optional href. Profiles render as their host.
+const contacts: { text: string; href?: string }[] = [];
+if (basics.email) contacts.push({ text: basics.email, href: `mailto:${basics.email}` });
+if ((basics as { phone?: string }).phone)
+  contacts.push({ text: (basics as { phone?: string }).phone! });
+if (location) contacts.push({ text: location });
+for (const p of basics.profiles ?? []) {
+  contacts.push({
+    text: p.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
+    href: p.url,
+  });
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{`Resume — ${basics.name}`}</title>
+    <meta name="robots" content="noindex" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    />
+  </head>
+  <body>
+    <article class="sheet">
+      <header class="head">
+        <h1>{basics.name}</h1>
+        {basics.label && <p class="label">{basics.label}</p>}
+        <ul class="contacts">
+          {contacts.map((c) => <li>{c.href ? <a href={c.href}>{c.text}</a> : c.text}</li>)}
+        </ul>
+      </header>
+
+      {basics.summary && <p class="summary">{basics.summary}</p>}
+
+      <section class="block">
+        <h2>Experience</h2>
+        {
+          resume.work.map((item) => (
+            <div class="entry">
+              <div class="entry-head">
+                <h3>
+                  {item.position}
+                  <span class="at"> · {item.name}</span>
+                </h3>
+                <span class="meta">{formatDateRange(item.startDate, item.endDate)}</span>
+              </div>
+              {item.location && <p class="entry-sub">{item.location}</p>}
+              {item.summary && <p class="entry-summary">{item.summary}</p>}
+              {item.highlights && item.highlights.length > 0 && (
+                <ul class="highlights">
+                  {item.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
+        }
+      </section>
+
+      {
+        resume.skills.length > 0 && (
+          <section class="block">
+            <h2>Skills</h2>
+            <dl class="skills">
+              {resume.skills.map((group) => (
+                <div class="skill-row">
+                  <dt>{group.name}</dt>
+                  <dd>{(group.keywords ?? []).join(' · ')}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )
+      }
+
+      {
+        resume.education.length > 0 && (
+          <section class="block">
+            <h2>Education</h2>
+            {resume.education.map((edu) => {
+              const credential = [edu.studyType, edu.area].filter(Boolean).join(', ');
+              return (
+                <div class="entry">
+                  <div class="entry-head">
+                    <h3>
+                      {edu.institution}
+                      {credential && <span class="at"> · {credential}</span>}
+                    </h3>
+                    {(edu.startDate || edu.endDate) && (
+                      <span class="meta">{formatDateRange(edu.startDate ?? '', edu.endDate)}</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        )
+      }
+
+      <footer class="foot">{site.url.replace(/^https?:\/\//, '')}</footer>
+    </article>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #ffffff;
+    --ink: #1c1812;
+    --ink-soft: #564e41;
+    --ink-faint: #786e5c;
+    --accent: #e8472b;
+    --rule: #d9cfbb;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family:
+      'Archivo',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sheet {
+    max-width: 7.5in;
+    margin-inline: auto;
+    padding: 0.4in 0;
+  }
+
+  /* Header */
+  .head h1 {
+    margin: 0;
+    font-size: 26pt;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .label {
+    margin: 0.15rem 0 0;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 10pt;
+  }
+  .contacts {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 8.5pt;
+    color: var(--ink-soft);
+  }
+  .contacts li {
+    position: relative;
+  }
+  .contacts li + li::before {
+    content: '·';
+    position: absolute;
+    left: -0.55rem;
+    color: var(--ink-faint);
+  }
+
+  /* Summary */
+  .summary {
+    margin: 0.7rem 0 0;
+    color: var(--ink-soft);
+  }
+
+  /* Sections */
+  .block {
+    margin-top: 0.85rem;
+  }
+  .block h2 {
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.15rem;
+    border-bottom: 1.5px solid var(--accent);
+    font-size: 11pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    /* Keep a heading from being stranded at the bottom of a page. */
+    break-after: avoid;
+  }
+
+  /* Entries */
+  .entry {
+    margin-bottom: 0.65rem;
+    break-inside: avoid;
+  }
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .entry h3 {
+    margin: 0;
+    font-size: 11pt;
+    font-weight: 700;
+  }
+  .entry h3 .at {
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .meta {
+    flex: none;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 8pt;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+  .entry-sub {
+    margin: 0.05rem 0 0;
+    font-size: 9pt;
+    color: var(--ink-faint);
+  }
+  .entry-summary {
+    margin: 0.25rem 0 0;
+    color: var(--ink-soft);
+  }
+  .highlights {
+    margin: 0.3rem 0 0;
+    padding-left: 1.05rem;
+  }
+  .highlights li {
+    margin-bottom: 0.12rem;
+    color: var(--ink-soft);
+  }
+
+  /* Skills */
+  .skills {
+    margin: 0;
+  }
+  .skill-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.5rem;
+    padding: 0.1rem 0;
+  }
+  .skill-row dt {
+    font-weight: 700;
+  }
+  .skill-row dd {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  /* Footer */
+  .foot {
+    margin-top: 1rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--rule);
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 8pt;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+</style>
