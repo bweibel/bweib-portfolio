@@ -2,268 +2,220 @@
   "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   "basics": {
     "name": "Ben Weibel",
-    "label": "Senior WordPress Developer | Plugins + Blocks | Performance + SEO | Content Systems",
+    "label": "Senior Full-Stack Systems Engineer",
     "email": "ben@bweib.com",
     "phone": "+1-740-541-0544",
     "url": "https://bweib.com",
-    "summary": "Senior full-stack web engineer (15+ years) specializing in WordPress platform engineering and modern JavaScript (TypeScript/React + strong vanilla JS). Hands-on technical lead for agency/consulting engagements: discovery/estimation, plugin architecture, custom Gutenberg/ACF blocks, content modeling (CPT/taxonomies), and integrations (HubSpot, CF7, The Events Calendar). Known for performance/SEO-first delivery (TTFB/CWV triage), security-minded implementation, and high-polish front ends (spacing/typography/layout) that match design intent. Comfortable owning roadmaps, writing SOPs/documentation, mentoring, and debugging production systems across Linux/Docker/logs.",
-    "location": { "city": "Bend", "countryCode": "US", "region": "OR" },
+    "summary": "Senior full-stack software engineer with 15+ years of experience building, modernizing, and supporting data-driven web applications, APIs, and production systems. Strong background in JavaScript/TypeScript, React, Node.js, PHP, SQL, REST APIs, Linux environments, Git workflows, and legacy system modernization. Experienced translating stakeholder requirements into maintainable software, improving existing codebases, documenting technical decisions, and supporting long-lived systems where reliability, data quality, and operational continuity matter.",
+    "location": {
+      "city": "Bend",
+      "countryCode": "US",
+      "region": "OR"
+    },
     "profiles": [
       {
         "network": "LinkedIn",
         "username": "ben-weibel-03994720",
         "url": "https://www.linkedin.com/in/ben-weibel-03994720/"
       },
-      { "network": "GitHub", "username": "bweibel", "url": "https://github.com/bweibel/" }
+      {
+        "network": "GitHub",
+        "username": "bweibel",
+        "url": "https://github.com/bweibel/"
+      }
     ]
   },
+
   "work": [
     {
       "name": "Wordfence",
       "location": "Seattle, WA",
-      "position": "Security Analyst",
+      "position": "Application Security Analyst",
       "url": "https://wordfence.com",
       "startDate": "2026-03-06",
-      "summary": "",
+      "employment_type": "Independent Contractor (Part-Time)",
+      "contract_via": "Weibel Web Consulting",
       "highlights": [
-        "Investigate compromised web applications and infrastructure, identify infection vectors, remove malicious persistence mechanisms, and restore operational integrity.",
-        "Perform forensic analysis and IOC collection across production WordPress environments, plugins, themes, server configurations, and third-party integrations.",
-        "Triage and validate vulnerability disclosures from bug bounty submissions, reproducing issues and assessing exploitability and operational impact.",
-        "Harden application and hosting environments through configuration review, access remediation, plugin auditing, and operational security improvements."
+        "Investigate compromised WordPress applications and hosting environments, identifying infection vectors, malicious persistence mechanisms, vulnerable components, and operational impact.",
+        "Perform forensic analysis across plugins, themes, server configuration, logs, database artifacts, and third-party integrations to restore application integrity.",
+        "Triage vulnerability reports and bug bounty submissions by reproducing issues, validating exploitability, and documenting findings for technical and non-technical audiences."
       ]
     },
+
     {
-      "name": "bweib LLC",
-      "location": "Bend, OR",
-      "position": "Freelance Developer and Web Consultant",
-      "url": "https://bweib.com",
-      "startDate": "2010-01-01",
-      "summary": "Independent web consulting and development for small businesses/nonprofits (WordPress-focused).",
+      "name": "Redtail Design Co (Consulting / Return Engagement)",
+      "location": "Athens, OH",
+      "position": "Senior Full Stack Engineer",
+      "startDate": "2025-02-01",
+      "employment_type": "Independent Contractor (Return Engagement)",
       "highlights": [
-        "Own end-to-end delivery: discovery, SOWs/estimates, architecture, implementation, launch, and maintenance retainers.",
-        "Build custom WordPress plugins and Gutenberg/ACF blocks as reusable primitives; ship composable components used across templates, patterns, and partner pages.",
-        "Deliver modern FSE sites using a custom base block theme + theme.json design tokens to ensure editor/front-end parity and consistent UX polish.",
-        "Create repeatable content delivery SOPs (pattern conventions, QA checks, release notes) so non-technical teams can publish at speed without regressions.",
-        "Lead performance/security hardening: TTFB/CWV triage, query hotspots, cache strategy, third-party script budgets, and secure WP patterns (caps/nonces/sanitization).",
-        "Handle hosting/DNS/email and incident response; troubleshoot production issues across Linux/Docker/logs and document fixes via runbooks/notes for continuity.",
-        "Primary full-time focus since early 2025; previously delivered alongside full-time roles."
+        "Provide ongoing full-stack maintenance, modernization, and production support for legacy and active client systems following prior full-time employment.",
+        "Improve WordPress-based platforms through targeted performance, security, integration, infrastructure, and maintainability updates."
       ]
     },
+
     {
       "name": "Smartz",
       "location": "Bend, OR",
-      "position": "Senior Front End Developer",
+      "position": "Development Team Lead (Senior Full-Stack Engineer)",
       "url": "https://smartz.com",
-      "startDate": "2020-04-01",
+      "startDate": "2020-04-08",
       "endDate": "2025-02-01",
-      "summary": "Led delivery for multiple client sites and integrations across WordPress, Shopify, Magento, and modern JS front ends.",
       "highlights": [
-        "Led incremental migration from legacy PHP themes to block themes (FSE); built templates/template parts, block patterns, and theme.json token systems to improve maintainability and visual consistency across a WPEngine-hosted portfolio.",
-        "Authored the migration playbook (readiness checklist, pattern library conventions, theme.json strategy, QA gates) used across new builds and phased conversions.",
-        "Built and maintained custom plugins/blocks for content teams, including React-based, editor-friendly abstractions and reusable components shared across multiple sites.",
-        "Improved Core Web Vitals and scalability across dozens of WP/Magento builds; focused on authenticated TTFB, query profiling, cache strategy, and third-party script budgets (Lighthouse/PageSpeed/WebPageTest).",
-        "Delivered integrations (HubSpot/CF7/The Events Calendar-style pipelines) with idempotent sync, failure logging, and retry-safe workflows to prevent double-creates and silent drops.",
-        "Led emergency recovery and platform updates for a portfolio of 15 large-scale Magento sites; introduced version control, repeatable release workflows, and an upgrade cadence.",
-        "Led support for production sites through maintenance and ticket queues; debugged issues spanning front-end behavior, API constraints, and platform/plugin interactions.",
-        "Conducted PR reviews and mentored devs on WP patterns, performance, and secure coding."
+        "Led a small development team of 2 engineers and 1 intern while coordinating with a web team manager on architecture, implementation planning, code review, release workflows, and production reliability.",
+        "Built, maintained, and modernized full-stack web applications across JavaScript/TypeScript, React, Node.js, PHP, SQL, REST API integrations, WordPress, Magento, Shopify, and custom application code.",
+        "Improved existing and legacy codebases by refactoring application logic, stabilizing integrations, standardizing Git-based deployment workflows, and reducing operational risk across active production systems.",
+        "Resolved complex production failures across frontend behavior, backend application code, SQL queries, caching layers, DNS, hosting environments, and third-party services.",
+        "Improved performance across production systems by addressing TTFB bottlenecks, inefficient database queries, caching behavior, script overhead, and frontend delivery issues."
       ]
     },
+    
     {
-      "name": "Redtail Design Co",
+      "name": "Redtail Design Co (W2 Employment)",
       "location": "Athens, OH",
-      "position": "Co-Founder, Full Stack Developer",
-      "url": "https://redtaildesign.com",
+      "position": "Full Stack Engineer",
       "startDate": "2016-08-01",
       "endDate": "2020-05-01",
-      "summary": "Led delivery for multiple client sites and integrations across WordPress and modern JS front ends.",
+      "employment_type": "Full-Time (W2)",
       "highlights": [
-        "Built custom WordPress themes/plugins and FSE builds; shipped reusable ACF/Gutenberg component systems (patterns + blocks) to standardize delivery.",
-        "Owned discovery/estimation and technical planning; delivered 5-10 client builds/quarter while managing scope, timelines, and quality of handoff.",
-        "Built ACF + Gutenberg component patterns and a deployment workflow used across client builds; reduced rework and improved consistency across releases.",
-        "Implemented accessibility-first UI guardrails and design-intent fidelity (spacing/typography/layout), raising the polish bar without designer dependency.",
-        "Created lightweight technical documentation (implementation notes, conventions, setup steps) to improve maintainability and onboarding.",
-        "Led client-facing consulting engagements end-to-end: discovery, IA/flows, wireframe-level direction, implementation, and iteration based on stakeholder feedback."
+        "Built and maintained custom CMS-backed applications, structured content systems, administrative workflows, and integrations using PHP, JavaScript, SQL, REST APIs, React, Gutenberg, ACF, and relational database-backed content models.",
+        "Developed reusable frontend component patterns and deployment workflows that improved maintainability and consistency across concurrent production projects.",
+        "Translated stakeholder requirements into technical plans, estimates, implementation details, and long-term maintenance approaches for active client systems.",
+        "Implemented accessibility, semantic markup, responsive UI patterns, and frontend performance improvements across production applications.",
+        "Provided ongoing support, documentation, troubleshooting, and release coordination for systems used by non-technical administrative stakeholders."
       ]
     },
+    
+
     {
       "name": "Electronic Vision",
       "location": "Athens, OH",
-      "position": "Senior Front End Developer",
+      "position": "Senior Full-Stack Web Developer",
       "url": "https://ev.net",
       "startDate": "2012-01-01",
       "endDate": "2016-05-01",
-      "summary": "Led delivery for multiple client sites and support/maintaince for a portfolio of legacy sites",
       "highlights": [
-        "Built dozens of responsive sites from design comps; delivered CMS templates and front-end behavior in HTML/CSS/JS/PHP.",
-        "Conducted client meetings to capture requirements and align implementation with business goals and user needs.",
-        "Provided maintenance and technical support, resolving client issues and ensuring site stability.",
-        "Supported Ohio University's internal web team with legacy support for 20+ web projects, ensuring uninterrupted service and updating outdated functionality.",
-        "Migrated University websites from a legacy CMS to Drupal; ensured content parity and stable templates during platform transitions."
+        "Developed and maintained CMS-driven websites, custom frontend functionality, templates, and administrative workflows using HTML, CSS, JavaScript, PHP, and SQL-backed content systems.",
+        "Built and supported WordPress and CMS-based sites for higher-education and organizational clients, including Ohio University-related web properties.",
+        "Worked directly with clients and stakeholders to define requirements, prioritize features, explain tradeoffs, and deliver maintainable production web systems.",
+        "Supported migrations and modernization efforts from legacy CMS platforms to Drupal-based systems, including content transitions, template redevelopment, and long-term maintenance."
+      ]
+    },
+
+    {
+      "name": "LiveInteractive",
+      "location": "Athens, OH",
+      "position": "Full Stack Engineer (Co-Founder)",
+      "startDate": "2012-08-01",
+      "endDate": "2014-05-01",
+      "summary": "Led development of a web and hybrid mobile (iOS/Android) event platform alongside full-time engineering work.",
+      "highlights": [
+        "Built a Django-based REST API backend supporting event data, ticketing workflows, authentication, administrative tooling, and hybrid mobile clients.",
+        "Developed hybrid mobile application interfaces using Ionic, integrating backend services for event discovery, user workflows, and production data updates.",
+        "Managed deployment, infrastructure, issue triage, and production support for an early-stage data-driven platform."
       ]
     }
   ],
+
   "education": [
     {
       "institution": "Ohio University",
-      "area": "Electrical Engineering Major, Computer Science Minor",
-      "studyType": "BS",
+      "area": "Electrical Engineering Coursework with Computer Science Minor Studies",
+      "studyType": "Undergraduate Coursework",
       "startDate": "2006-09-01",
       "endDate": "2012-06-01"
     }
   ],
-  "skills": [
-    {
-      "name": "WordPress (FSE / Gutenberg)",
-      "level": "Expert",
-      "keywords": [
-        "Full Site Editing (FSE)",
-        "Block Themes",
-        "Templates / Template Parts",
-        "Block Patterns",
-        "theme.json (tokens, settings, styles)",
-        "Style Variations",
-        "Global Styles"
-      ]
-    },
-    {
-      "name": "WordPress Plugins & Blocks",
-      "level": "Expert",
-      "keywords": [
-        "Custom Plugins (architecture, admin UX)",
-        "Gutenberg Blocks (block.json / dynamic blocks)",
-        "Custom Post Types (CPT)",
-        "ACF Blocks",
-        "Vanilla JS (no-framework)",
-        "REST/AJAX handlers",
-        "Nonces / Capabilities / Sanitization",
-        "WP Coding Standards"
-      ]
-    },
-    {
-      "name": "WordPress Engineering",
-      "level": "Expert",
-      "keywords": [
-        "ACF",
-        "Composer",
-        "Content Modeling",
-        "Custom Themes/Plugins",
-        "Jest",
-        "Taxonomies",
-        "WP REST API",
-        "WP-CLI"
-      ]
-    },
-    {
-      "name": "Front End",
-      "level": "Expert",
-      "keywords": [
-        "JavaScript",
-        "TypeScript",
-        "React",
-        "HTML",
-        "CSS",
-        "Performance/Core Web Vitals",
-        "Accessibility",
-        "Webpack",
-        "Vite/NPM"
-      ]
-    },
-    {
-      "name": "Back End",
-      "level": "Advanced",
-      "keywords": ["PHP", "MySQL", "Node.js", "REST APIs"]
-    },
-    {
-      "name": "Engineering Leadership",
-      "level": "Advanced",
-      "keywords": [
-        "Discovery & Estimation",
-        "Code Reviews",
-        "Technical Planning",
-        "PR Reviews",
-        "Mentoring",
-        "Technical Documentation",
-        "Support / Incident Response"
-      ]
-    },
-    {
-      "name": "Ops / Debugging",
-      "level": "Advanced",
-      "keywords": [
-        "Linux",
-        "Docker",
-        "Logging/Profiling",
-        "DNS",
-        "CI/CD (GitHub Actions)",
-        "Deployments (SSH, rsync, Docker)"
-      ]
-    },
-    {
-      "name": "CMS / Ecommerce",
-      "level": "Expert",
-      "keywords": ["Shopify", "Magento", "Drupal", "Payment Integrations"]
-    }
-  ],
-  "projects": [
-    {
-      "name": "Member Directory + Map Plugin",
-      "description": "Custom plugin powering a CPT-backed directory with composable blocks (list + map) and real-time filtering/sorting for scalable, SEO-friendly content pages.",
-      "highlights": [
-        "Designed the content/data model (CPT/taxonomies + structured fields) and built reusable blocks for list and map presentations.",
-        "Implemented filtering/sorting with performance in mind (query strategy + predictable rendering) to support growth in entries and traffic.",
-        "Created editor-friendly patterns/templates and documentation so content teams can produce consistent pages with minimal manual formatting."
-      ],
-      "keywords": [
-        "WordPress",
-        "FSE",
-        "Templates",
-        "Block Patterns",
-        "CPT",
-        "Gutenberg",
-        "ACF",
-        "JavaScript"
-      ],
-      "roles": ["Lead Engineer"],
-      "type": "application"
-    },
-    {
-      "name": "WP + HubSpot Signup + Permissions",
-      "description": "Automated signup pipeline validating eligibility, provisioning WordPress users/roles, and syncing to HubSpot via reliable, idempotent workflows.",
-      "highlights": [
-        "Built validation + provisioning, plus role/capability gating for protected content and support experiences.",
-        "Implemented audit-friendly logging and failure handling to prevent silent drops and duplicate records.",
-        "Delivered polished authenticated UX (conditional nav, gated templates) aligned with a theme.json-driven design system."
-      ],
-      "keywords": ["WordPress", "FSE", "theme.json", "PHP", "HubSpot", "Integrations", "Auth"],
-      "roles": ["Full-Stack Engineer"],
-      "type": "application"
-    },
-    {
-      "name": "Beer List (WordPress Plugin + Blocks)",
-      "description": "Custom WordPress plugin providing a CPT-backed beer list/taplist with editor-friendly blocks and a dynamic on-page filtering front-end display.",
-      "highlights": [
-        "Built plugin architecture from scratch (CPT/taxonomies/fields + rendering) with a focus on maintainability and clean separation of concerns.",
-        "Developed reusable editor components/blocks to standardize layout and reduce manual formatting for content teams.",
-        "Designed for performance and extensibility (predictable queries, reusable templates/components, and clear configuration surfaces)."
-      ],
-      "keywords": [
-        "WordPress",
-        "Custom Plugin",
-        "Gutenberg Blocks",
-        "ACF",
-        "CPT",
-        "PHP",
-        "JavaScript",
-        "CSS"
-      ],
-      "roles": ["Lead Engineer"],
-      "type": "application",
-      "url": "https://github.com/bweibel/bweib-beer-list"
-    }
-  ],
+
+ "skills": [
+  {
+    "name": "Core Engineering",
+    "keywords": [
+      "JavaScript",
+      "TypeScript",
+      "HTML/CSS",
+      "PHP",
+      "React",
+      "Node.js",
+      "REST APIs",
+      "Accessibility (WCAG)",
+      "Git"
+    ]
+  },
+
+  {
+    "name": "Backend & Data Systems",
+    "keywords": [
+      "Python",
+      "Django",
+      "SQL",
+      "MySQL",
+      "PostgreSQL",
+      "Data Modeling",
+      "Authentication",
+      "API Design",
+      "Database Optimization"
+    ]
+  },
+
+  {
+    "name": "Application Modernization",
+    "keywords": [
+      "Incremental refactoring",
+      "Technical documentation",
+      "Release coordination",
+      "Issue triage",
+      "Stakeholder requirements",
+      "Legacy system maintenance"
+    ]
+  },
+  {
+    "name": "Infrastructure & Reliability",
+    "keywords": [
+      "Linux",
+      "Docker",
+      "CI/CD",
+      "GitHub Actions",
+      "DNS",
+      "SSL/TLS",
+      "SSH",
+      "Logging",
+      "Profiling",
+      "Production Troubleshooting"
+    ]
+  },
+  {
+    "name": "CMS & Domain Platforms",
+    "keywords": [
+      "WordPress",
+      "ACF",
+      "custom post types",
+      "WP-CLI",
+      "Magento",
+      "Shopify",
+      "content architecture",
+      "ecommerce integrations",
+      "Gutenberg"
+    ]
+  },
+  {
+    "name": "Security",
+    "keywords": [
+      "Application Security",
+      "WordPress Security",
+      "Forensics",
+      "Vulnerability Assessment",
+      "Production Hardening",
+      "Log Analysis"
+    ]
+  }
+
+],
+
   "meta": {
     "canonical": "https://bweib.com/resume.json",
-    "version": "v1.0.0",
-    "lastModified": "2025-12-21T00:00:00Z"
+    "version": "v4.0.0",
+    "lastModified": "2026-07-02T00:00:00Z"
   }
 }
+
