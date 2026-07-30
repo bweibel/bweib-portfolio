@@ -61,8 +61,8 @@ export const caseStudies: CaseStudy[] = [
     ],
     image: 'beverage-tracker.png',
     imageAlt: 'The Beverage Tracker web app',
-    link: 'https://winterwarmerfest.com/beer-list',
-    repo: 'https://github.com/bweibel/bweib-beer-list',
+    link: 'https://ohiobrewweek.com/brews/',
+    repo: 'https://github.com/bweibel/obw-beer-tracker',
   },
   {
     title: 'TI-99 CyberDeck',
